@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { apiGetModules, apiDeleteModule, Module } from "@/lib/api";
+import { useToast } from "@/app/components/ui/ToastProvider";
+import DeleteConfirmModal, { useDeleteConfirm } from "@/app/components/ui/DeleteConfirmModal";
 import {
   LayoutGrid,
   FilePlus2,
@@ -17,6 +19,7 @@ import {
   AlertCircle,
   Loader2,
   Terminal,
+  ArrowUpDown,
 } from "lucide-react";
 
 const DIFFICULTY_COLORS: Record<string, string> = {
@@ -58,19 +61,12 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
 
-  const showToast = (
-    message: string,
-    type: "success" | "error" = "success",
-  ) => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  const { showToast } = useToast();
+  const { state: deleteModal, confirm: confirmDelete, cancel: cancelDelete } = useDeleteConfirm();
 
   const loadModules = useCallback(async () => {
     try {
@@ -90,27 +86,39 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [loadModules, search]);
 
-  const handleDelete = async (id: string, title: string) => {
-    if (
-      !confirm(
-        `Delete module "${title}" and all its questions? This cannot be undone.`,
-      )
-    )
-      return;
+  const handleDeleteRequest = (id: string, title: string) => {
+    setPendingDelete({ id, title });
+    confirmDelete({
+      title: `Delete "${title}"?`,
+      description: "This will permanently delete the module and all its questions. This cannot be undone.",
+      onConfirm: () => executeDelete(id, title),
+    });
+  };
+
+  const executeDelete = useCallback(async (id: string, title: string) => {
     setDeleting(id);
     try {
       await apiDeleteModule(id);
-      showToast(`Module "${title}" deleted`);
+      showToast(`Module "${title}" deleted`, "success");
       loadModules();
     } catch (err) {
-      showToast(
-        err instanceof Error ? err.message : "Failed to delete",
-        "error",
-      );
+      showToast(err instanceof Error ? err.message : "Failed to delete", "error");
     } finally {
       setDeleting(null);
+      setPendingDelete(null);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showToast]);
+
+  // Sort modules client-side
+  const sortedModules = [...modules].sort((a, b) => {
+    if (sortBy === "az") return a.title.localeCompare(b.title);
+    if (sortBy === "za") return b.title.localeCompare(a.title);
+    if (sortBy === "questions") return (b.question_count || 0) - (a.question_count || 0);
+    if (sortBy === "oldest") return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+    // newest (default)
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+  });
 
   const stats = {
     total: modules.length,
@@ -180,7 +188,7 @@ export default function Home() {
         {/* Header */}
         <header className="h-20 flex-shrink-0 flex items-center justify-between px-8 border-b border-gray-200 bg-[#f5f5f5]/80 backdrop-blur-md z-10">
           <div>
-            <h1 className="text-xl font-bold text-slate-100">
+            <h1 className="text-xl font-bold text-gray-900">
               Modules Management
             </h1>
             <p className="text-sm text-gray-500">
@@ -199,8 +207,8 @@ export default function Home() {
         <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-6xl mx-auto space-y-6">
             {/* Search and Filters */}
-            <div className="flex gap-3">
-              <div className="flex-1 relative">
+            <div className="flex flex-wrap gap-3">
+              <div className="flex-1 min-w-[200px] relative">
                 <Search
                   size={18}
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"
@@ -227,6 +235,23 @@ export default function Home() {
                   <option value="Beginner">Beginner</option>
                   <option value="Intermediate">Intermediate</option>
                   <option value="Advanced">Advanced</option>
+                </select>
+              </div>
+              <div className="relative">
+                <ArrowUpDown
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-white border border-gray-300 hover:border-slate-500 text-gray-700 pl-9 pr-8 py-3 rounded-xl transition appearance-none focus:outline-none focus:border-indigo-500 text-sm cursor-pointer"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="az">A → Z</option>
+                  <option value="za">Z → A</option>
+                  <option value="questions">Most Questions</option>
                 </select>
               </div>
             </div>
@@ -282,10 +307,11 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                    {modules.map((module) => (
+                    {sortedModules.map((module) => (
                       <div
                         key={module.id}
-                        className="group bg-white border border-gray-300 hover:border-indigo-500/50 rounded-2xl p-6 transition-all shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 relative overflow-hidden flex flex-col"
+                        className="group bg-white border border-gray-300 rounded-2xl p-6 transition-all shadow-sm hover:shadow-xl relative overflow-hidden flex flex-col"
+                        style={{ borderTop: `4px solid ${module.color || "#6366f1"}` }}
                       >
                         {/* Action Buttons */}
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
@@ -305,7 +331,7 @@ export default function Home() {
                           </Link>
                           <button
                             onClick={() =>
-                              handleDelete(module.id, module.title)
+                              handleDeleteRequest(module.id, module.title)
                             }
                             disabled={deleting === module.id}
                             className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition disabled:opacity-50"
@@ -320,7 +346,13 @@ export default function Home() {
                         </div>
 
                         {/* Icon */}
-                        <div className="w-12 h-12 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-xl mb-4 group-hover:scale-105 group-hover:border-indigo-500/30 transition-transform flex-shrink-0">
+                        <div 
+                          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-105 transition-transform flex-shrink-0"
+                          style={{ 
+                            backgroundColor: `${module.color || "#6366f1"}15`, 
+                            color: module.color || "#6366f1" 
+                          }}
+                        >
                           {getIcon(module.provider)}
                         </div>
 
@@ -341,7 +373,7 @@ export default function Home() {
                         </div>
 
                         {/* Title & Description */}
-                        <h3 className="text-base font-bold text-slate-100 mb-1.5">
+                        <h3 className="text-base font-bold text-gray-900 mb-1.5">
                           {module.title}
                         </h3>
                         <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">
@@ -386,18 +418,15 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Toast */}
-      {toast && (
-        <div
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border text-sm font-medium transition-all animate-in slide-in-from-bottom-2 ${
-            toast.type === "success"
-              ? "bg-emerald-950 border-emerald-500/30 text-emerald-300"
-              : "bg-red-950 border-red-500/30 text-red-300"
-          }`}
-        >
-          {toast.type === "success" ? "✓" : "✗"} {toast.message}
-        </div>
-      )}
+      {/* Delete Confirm Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        title={deleteModal.title}
+        description={deleteModal.description}
+        isDeleting={deleting === pendingDelete?.id}
+        onConfirm={deleteModal.onConfirm}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 }

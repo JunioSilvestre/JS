@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   try {
     const db = getDb();
     const body = await req.json();
-    const { id, title, description, provider, certification, difficulty } =
+    const { id, title, description, provider, certification, difficulty, color } =
       body;
 
     if (!id || !title) {
@@ -69,10 +69,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const PALETTE = [
+      "#64748b", "#71717a", "#737373", "#78716c", "#ef4444", "#f97316",
+      "#f59e0b", "#eab308", "#84cc16", "#22c55e", "#10b981", "#14b8a6",
+      "#06b6d4", "#0ea5e9", "#3b82f6", "#6366f1", "#8b5cf6", "#a855f7",
+      "#d946ef", "#ec4899", "#f43f5e"
+    ];
+    const assignedColor = color || PALETTE[Math.floor(Math.random() * PALETTE.length)];
+
     db.prepare(
       `
-      INSERT INTO modules (id, title, description, provider, certification, difficulty)
-      VALUES (@id, @title, @description, @provider, @certification, @difficulty)
+      INSERT INTO modules (id, title, description, provider, certification, difficulty, color)
+      VALUES (@id, @title, @description, @provider, @certification, @difficulty, @color)
     `,
     ).run({
       id,
@@ -81,6 +89,7 @@ export async function POST(req: NextRequest) {
       provider: provider || "",
       certification: certification || "",
       difficulty: difficulty || "Beginner",
+      color: assignedColor,
     });
 
     const mod = db.prepare("SELECT * FROM modules WHERE id = ?").get(id);

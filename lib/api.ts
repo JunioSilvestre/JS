@@ -152,6 +152,7 @@ export interface Module {
   provider: string;
   certification: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
+  color?: string;
   created_at?: string;
   updated_at?: string;
   question_count?: number;
