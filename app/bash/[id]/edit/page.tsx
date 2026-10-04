@@ -166,16 +166,29 @@ export default function EditBashScriptPage({ params }: { params: Promise<{ id: s
             </h2>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Bash Code (.sh)
               </label>
-              <textarea
-                value={formData.script_content}
-                onChange={(e) => setFormData({ ...formData, script_content: e.target.value })}
-                rows={12}
-                className="w-full bg-gray-900 border border-black text-gray-100 font-mono text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/50 transition-all placeholder:text-gray-600 resize-y min-h-[250px]"
-                spellCheck={false}
-              />
+              <div className="rounded-xl overflow-hidden shadow-sm border border-[#333] bg-[#1e1e1e] focus-within:ring-2 focus-within:ring-indigo-500/50 transition-all">
+                {/* Mac Window Header */}
+                <div className="flex items-center px-4 py-3 bg-[#2d2d2d] border-b border-[#111]">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                  </div>
+                  <div className="flex-1 text-center text-xs text-gray-400 font-medium font-mono">
+                    {formData.title ? formData.title.toLowerCase().replace(/\s+/g, '-') + '.sh' : 'untitled.sh'}
+                  </div>
+                </div>
+                <textarea
+                  value={formData.script_content}
+                  onChange={(e) => setFormData({ ...formData, script_content: e.target.value })}
+                  rows={12}
+                  className="w-full bg-transparent text-[#d4d4d4] font-mono text-sm px-4 py-4 focus:outline-none resize-y min-h-[250px]"
+                  spellCheck={false}
+                />
+              </div>
             </div>
             
             <BashAnatomyBuilder
