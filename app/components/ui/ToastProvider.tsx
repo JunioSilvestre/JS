@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 import { CheckCircle2, XCircle, AlertTriangle, Info, X } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -28,7 +34,9 @@ export function useToast() {
 
 // ─── Icon map ─────────────────────────────────────────────────────────────────
 const ICONS: Record<ToastType, React.ReactNode> = {
-  success: <CheckCircle2 size={16} className="text-emerald-400 flex-shrink-0" />,
+  success: (
+    <CheckCircle2 size={16} className="text-emerald-400 flex-shrink-0" />
+  ),
   error: <XCircle size={16} className="text-red-400 flex-shrink-0" />,
   warning: <AlertTriangle size={16} className="text-amber-400 flex-shrink-0" />,
   info: <Info size={16} className="text-blue-400 flex-shrink-0" />,
@@ -45,13 +53,16 @@ const STYLES: Record<ToastType, string> = {
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = useCallback((message: string, type: ToastType = "success") => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3500);
-  }, []);
+  const showToast = useCallback(
+    (message: string, type: ToastType = "success") => {
+      const id = Math.random().toString(36).substring(2, 9);
+      setToasts((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, 3500);
+    },
+    [],
+  );
 
   const dismiss = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));

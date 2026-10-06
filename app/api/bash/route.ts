@@ -22,7 +22,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data, total: data.length });
   } catch (error: unknown) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }
 
@@ -32,7 +35,10 @@ export async function POST(request: Request) {
     const data = await request.json();
 
     if (!data.title || !data.problem || !data.script_content) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
     }
 
     const stmt = db.prepare(`
@@ -41,12 +47,23 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?)
     `);
 
-    const result = stmt.run(data.title, data.problem, data.script_content, data.anatomy || null);
-    
-    return NextResponse.json({
-      data: { id: result.lastInsertRowid, ...data }
-    }, { status: 201 });
+    const result = stmt.run(
+      data.title,
+      data.problem,
+      data.script_content,
+      data.anatomy || null,
+    );
+
+    return NextResponse.json(
+      {
+        data: { id: result.lastInsertRowid, ...data },
+      },
+      { status: 201 },
+    );
   } catch (error: unknown) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }

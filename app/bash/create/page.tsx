@@ -3,14 +3,25 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Terminal, ArrowLeft, Save, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Terminal,
+  ArrowLeft,
+  Save,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { apiCreateBashScript } from "@/lib/api";
-import BashAnatomyBuilder, { AnatomySection } from "@/app/components/BashAnatomyBuilder";
+import BashAnatomyBuilder, {
+  AnatomySection,
+} from "@/app/components/BashAnatomyBuilder";
 
 export default function CreateBashScriptPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const [formData, setFormData] = useState<{
     title: string;
@@ -24,13 +35,20 @@ export default function CreateBashScriptPage() {
     anatomy: [],
   });
 
-  const showToast = (message: string, type: "success" | "error" = "success") => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success",
+  ) => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
   const handleSave = async () => {
-    if (!formData.title.trim() || !formData.problem.trim() || !formData.script_content.trim()) {
+    if (
+      !formData.title.trim() ||
+      !formData.problem.trim() ||
+      !formData.script_content.trim()
+    ) {
       showToast("Please fill in all fields", "error");
       return;
     }
@@ -85,7 +103,6 @@ export default function CreateBashScriptPage() {
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
         {/* LEFT COLUMN - Form */}
         <div className="space-y-6">
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -105,7 +122,9 @@ export default function CreateBashScriptPage() {
                   type="text"
                   placeholder="e.g. Find and delete old logs"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all placeholder:text-gray-400"
                 />
               </div>
@@ -117,7 +136,9 @@ export default function CreateBashScriptPage() {
                 <textarea
                   placeholder="Describe the problem to solve..."
                   value={formData.problem}
-                  onChange={(e) => setFormData({ ...formData, problem: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, problem: e.target.value })
+                  }
                   rows={5}
                   className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all placeholder:text-gray-400 resize-y min-h-[120px]"
                 />
@@ -146,22 +167,29 @@ export default function CreateBashScriptPage() {
                     <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
                   </div>
                   <div className="flex-1 text-center text-xs text-gray-400 font-medium font-mono">
-                    {formData.title ? formData.title.toLowerCase().replace(/\s+/g, '-') + '.sh' : 'untitled.sh'}
+                    {formData.title
+                      ? formData.title.toLowerCase().replace(/\s+/g, "-") +
+                        ".sh"
+                      : "untitled.sh"}
                   </div>
                 </div>
                 <textarea
                   value={formData.script_content}
-                  onChange={(e) => setFormData({ ...formData, script_content: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, script_content: e.target.value })
+                  }
                   rows={12}
                   className="w-full bg-transparent text-[#d4d4d4] font-mono text-sm px-4 py-4 focus:outline-none resize-y min-h-[250px]"
                   spellCheck={false}
                 />
               </div>
             </div>
-            
+
             <BashAnatomyBuilder
               anatomy={formData.anatomy}
-              onChange={(newAnatomy) => setFormData({ ...formData, anatomy: newAnatomy })}
+              onChange={(newAnatomy) =>
+                setFormData({ ...formData, anatomy: newAnatomy })
+              }
             />
           </div>
         </div>
@@ -173,7 +201,7 @@ export default function CreateBashScriptPage() {
               Live Preview
             </h3>
 
-            {(formData.title || formData.problem || formData.script_content) ? (
+            {formData.title || formData.problem || formData.script_content ? (
               <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div className="p-5 flex items-center justify-between">
                   <div>
@@ -197,7 +225,7 @@ export default function CreateBashScriptPage() {
                     <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
                       Solution Script (.sh)
                     </h4>
-                    
+
                     {/* VS Code Mac Style Code Block */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-[#333] bg-[#1e1e1e]">
                       {/* Mac Window Header */}
@@ -208,7 +236,10 @@ export default function CreateBashScriptPage() {
                           <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
                         </div>
                         <div className="flex-1 text-center text-xs text-gray-400 font-medium font-mono">
-                          {(formData.title || "untitled").toLowerCase().replace(/\s+/g, '-')}.sh
+                          {(formData.title || "untitled")
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}
+                          .sh
                         </div>
                       </div>
                       {/* Code Content */}
@@ -219,23 +250,23 @@ export default function CreateBashScriptPage() {
                       </div>
                     </div>
                     {/* Bash Anatomy Visualization */}
-                    {formData.anatomy && formData.anatomy.length > 0 && formData.anatomy.some(sec => sec.items.length > 0) && (
-                      <div className="mt-6">
-                        <BashAnatomyBuilder
-                          anatomy={formData.anatomy}
-                          readonly={true}
-                        />
-                      </div>
-                    )}
+                    {formData.anatomy &&
+                      formData.anatomy.length > 0 &&
+                      formData.anatomy.some((sec) => sec.items.length > 0) && (
+                        <div className="mt-6">
+                          <BashAnatomyBuilder
+                            anatomy={formData.anatomy}
+                            readonly={true}
+                          />
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
             ) : (
               <div className="text-center py-12 text-gray-400 border-2 border-dashed border-gray-200 rounded-2xl">
                 <Terminal size={40} className="mx-auto mb-3 opacity-20" />
-                <p className="text-sm">
-                  Start typing to see the preview
-                </p>
+                <p className="text-sm">Start typing to see the preview</p>
               </div>
             )}
           </div>
@@ -251,7 +282,11 @@ export default function CreateBashScriptPage() {
               : "bg-red-950 border-red-500/30 text-red-300"
           }`}
         >
-          {toast.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+          {toast.type === "success" ? (
+            <CheckCircle2 size={16} />
+          ) : (
+            <AlertCircle size={16} />
+          )}
           {toast.message}
         </div>
       )}

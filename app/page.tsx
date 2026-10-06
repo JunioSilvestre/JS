@@ -2,9 +2,18 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { apiGetModules, apiDeleteModule, Module } from "@/lib/api";
+import {
+  apiGetModules,
+  apiDeleteModule,
+  Module,
+  apiGetInfraProjects,
+  apiDeleteInfraProject,
+  InfraProject,
+} from "@/lib/api";
 import { useToast } from "@/app/components/ui/ToastProvider";
-import DeleteConfirmModal, { useDeleteConfirm } from "@/app/components/ui/DeleteConfirmModal";
+import DeleteConfirmModal, {
+  useDeleteConfirm,
+} from "@/app/components/ui/DeleteConfirmModal";
 import {
   LayoutGrid,
   FilePlus2,
@@ -57,16 +66,24 @@ function timeAgo(dateStr: string): string {
 
 export default function Home() {
   const [modules, setModules] = useState<Module[]>([]);
+  const [infraProjects, setInfraProjects] = useState<InfraProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   const { showToast } = useToast();
-  const { state: deleteModal, confirm: confirmDelete, cancel: cancelDelete } = useDeleteConfirm();
+  const {
+    state: deleteModal,
+    confirm: confirmDelete,
+    cancel: cancelDelete,
+  } = useDeleteConfirm();
 
   const loadModules = useCallback(async () => {
     try {
@@ -74,6 +91,8 @@ export default function Home() {
       setError(null);
       const res = await apiGetModules({ search, difficulty });
       setModules(res.data);
+      const infraRes = await apiGetInfraProjects();
+      setInfraProjects(infraRes.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load modules");
     } finally {
@@ -90,34 +109,66 @@ export default function Home() {
     setPendingDelete({ id, title });
     confirmDelete({
       title: `Delete "${title}"?`,
-      description: "This will permanently delete the module and all its questions. This cannot be undone.",
-      onConfirm: () => executeDelete(id, title),
+      description:
+        "This will permanently delete the module and all its questions. This cannot be undone.",
+      onConfirm: () => executeDelete(id, title, "module"),
     });
   };
 
-  const executeDelete = useCallback(async (id: string, title: string) => {
-    setDeleting(id);
-    try {
-      await apiDeleteModule(id);
-      showToast(`Module "${title}" deleted`, "success");
-      loadModules();
-    } catch (err) {
-      showToast(err instanceof Error ? err.message : "Failed to delete", "error");
-    } finally {
-      setDeleting(null);
-      setPendingDelete(null);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showToast]);
+  const executeDelete = useCallback(
+    async (id: string, title: string, type: "module" | "infra" = "module") => {
+      setDeleting(id);
+      try {
+        if (type === "infra") {
+          await apiDeleteInfraProject(id);
+        } else {
+          await apiDeleteModule(id);
+        }
+        showToast(`Module "${title}" deleted`, "success");
+        loadModules();
+      } catch (err) {
+        showToast(
+          err instanceof Error ? err.message : "Failed to delete",
+          "error",
+        );
+      } finally {
+        setDeleting(null);
+        setPendingDelete(null);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [showToast],
+  );
 
   // Sort modules client-side
+  const sortedInfra = [...infraProjects]
+    .filter(
+      (p) => !search || p.name.toLowerCase().includes(search.toLowerCase()),
+    )
+    .sort((a, b) => {
+      if (sortBy === "az") return a.name.localeCompare(b.name);
+      if (sortBy === "za") return b.name.localeCompare(a.name);
+      return (
+        new Date(b.created_at || 0).getTime() -
+        new Date(a.created_at || 0).getTime()
+      );
+    });
+
   const sortedModules = [...modules].sort((a, b) => {
     if (sortBy === "az") return a.title.localeCompare(b.title);
     if (sortBy === "za") return b.title.localeCompare(a.title);
-    if (sortBy === "questions") return (b.question_count || 0) - (a.question_count || 0);
-    if (sortBy === "oldest") return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+    if (sortBy === "questions")
+      return (b.question_count || 0) - (a.question_count || 0);
+    if (sortBy === "oldest")
+      return (
+        new Date(a.created_at || 0).getTime() -
+        new Date(b.created_at || 0).getTime()
+      );
     // newest (default)
-    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    return (
+      new Date(b.created_at || 0).getTime() -
+      new Date(a.created_at || 0).getTime()
+    );
   });
 
   const stats = {
@@ -157,6 +208,12 @@ export default function Home() {
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm"
           >
             <Terminal size={18} /> Bash
+          </Link>
+          <Link
+            href="/infra"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm"
+          >
+            <Layers size={18} /> Infra Híbrida
           </Link>
           <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium w-full text-left text-sm">
             <Settings size={18} /> Settings
@@ -281,37 +338,149 @@ export default function Home() {
             {/* Modules Grid */}
             {!loading && !error && (
               <>
-                {modules.length === 0 ? (
+                {modules.length === 0 &&
+                sortedInfra.length === 0 &&
+                (!search ||
+                  !"infra híbrida linux windows cloud".includes(
+                    search.toLowerCase(),
+                  )) ? (
                   <div className="text-center py-24">
                     <div className="w-20 h-20 rounded-2xl bg-white border border-gray-300 flex items-center justify-center text-4xl mx-auto mb-6">
                       📚
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">
                       {search || difficulty
-                        ? "No modules match your filters"
-                        : "No modules yet"}
+                        ? "Nenhum resultado encontrado"
+                        : "Nenhum módulo ou projeto ainda"}
                     </h3>
                     <p className="text-gray-500 mb-6 max-w-sm mx-auto">
                       {search || difficulty
-                        ? "Try adjusting your search or filter criteria."
-                        : "Create your first certification module to get started."}
+                        ? "Tente ajustar seus filtros de busca."
+                        : "Crie seu primeiro módulo ou projeto de infraestrutura."}
                     </p>
                     {!search && !difficulty && (
                       <Link
                         href="/modules/create"
                         className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition text-sm"
                       >
-                        <FilePlus2 size={18} /> Create First Module
+                        <FilePlus2 size={18} /> Criar Primeiro Módulo
                       </Link>
                     )}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {/* Dynamic Infra */}
+                    {sortedInfra.map((proj) => (
+                      <div
+                        key={proj.id}
+                        className="group bg-white border border-gray-300 rounded-2xl p-6 transition-all shadow-sm hover:shadow-xl relative overflow-hidden flex flex-col"
+                        style={{ borderTop: `4px solid #8b5cf6` }}
+                      >
+                        {/* Action Buttons */}
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                          <button
+                            onClick={() => {
+                              setPendingDelete({
+                                id: proj.id,
+                                title: proj.name,
+                              });
+                              confirmDelete({
+                                title: `Delete "${proj.name}"?`,
+                                description:
+                                  "This will permanently delete the infra project. This cannot be undone.",
+                                onConfirm: () =>
+                                  executeDelete(proj.id, proj.name, "infra"),
+                              });
+                            }}
+                            disabled={deleting === proj.id}
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition disabled:opacity-50"
+                            title="Delete Project"
+                          >
+                            {deleting === proj.id ? (
+                              <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={14} />
+                            )}
+                          </button>
+                        </div>
+
+                        {/* Icon */}
+                        <div
+                          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-105 transition-transform flex-shrink-0"
+                          style={{
+                            backgroundColor: `#8b5cf615`,
+                            color: "#8b5cf6",
+                          }}
+                        >
+                          <Layers size={24} />
+                        </div>
+
+                        {/* Badges */}
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            Infra Híbrida
+                          </span>
+                          <span
+                            className={`text-xs font-medium px-2 py-0.5 rounded-md border ${
+                              proj.level === "basico"
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                : proj.level === "intermediario"
+                                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                  : "bg-red-500/10 text-red-400 border-red-500/20"
+                            }`}
+                          >
+                            {proj.level === "basico"
+                              ? "Básico"
+                              : proj.level === "intermediario"
+                                ? "Intermediário"
+                                : "Avançado"}
+                          </span>
+                        </div>
+
+                        {/* Title & Description */}
+                        <h3 className="text-base font-bold text-gray-900 mb-1.5">
+                          {proj.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">
+                          {Array.isArray(proj.reqs)
+                            ? proj.reqs.join(", ")
+                            : typeof proj.reqs === "string"
+                              ? (() => {
+                                  try {
+                                    return JSON.parse(proj.reqs).join(", ");
+                                  } catch {
+                                    return proj.reqs;
+                                  }
+                                })()
+                              : ""}
+                        </p>
+
+                        {/* Footer */}
+                        <div className="flex items-center justify-between border-t border-gray-300 pt-4 mt-auto">
+                          <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <span className="flex items-center gap-1.5">
+                              <Layers size={14} />
+                              Projeto
+                            </span>
+                          </div>
+                          <Link
+                            href="/infra"
+                            className="flex items-center gap-1 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition"
+                          >
+                            Open <ChevronRight size={14} />
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Dynamic Modules */}
                     {sortedModules.map((module) => (
                       <div
                         key={module.id}
                         className="group bg-white border border-gray-300 rounded-2xl p-6 transition-all shadow-sm hover:shadow-xl relative overflow-hidden flex flex-col"
-                        style={{ borderTop: `4px solid ${module.color || "#6366f1"}` }}
+                        style={{
+                          borderTop: `4px solid ${module.color || "#6366f1"}`,
+                        }}
                       >
                         {/* Action Buttons */}
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
@@ -346,11 +515,11 @@ export default function Home() {
                         </div>
 
                         {/* Icon */}
-                        <div 
+                        <div
                           className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-105 transition-transform flex-shrink-0"
-                          style={{ 
-                            backgroundColor: `${module.color || "#6366f1"}15`, 
-                            color: module.color || "#6366f1" 
+                          style={{
+                            backgroundColor: `${module.color || "#6366f1"}15`,
+                            color: module.color || "#6366f1",
                           }}
                         >
                           {getIcon(module.provider)}

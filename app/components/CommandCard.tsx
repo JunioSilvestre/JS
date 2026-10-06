@@ -57,9 +57,7 @@ export default function CommandCard({
           {command || "Command"}
         </h1>
         {description && (
-          <p className="text-lg text-[#aaa] font-sans">
-            {description}
-          </p>
+          <p className="text-lg text-[#aaa] font-sans">{description}</p>
         )}
       </div>
 
@@ -114,8 +112,12 @@ export default function CommandCard({
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
                   <tr className="border-b-2 border-[#222]">
-                    <th className="pb-3 text-[#9cdcfe] font-semibold">Option</th>
-                    <th className="pb-3 text-[#9cdcfe] font-semibold">Description</th>
+                    <th className="pb-3 text-[#9cdcfe] font-semibold">
+                      Option
+                    </th>
+                    <th className="pb-3 text-[#9cdcfe] font-semibold">
+                      Description
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#111]">

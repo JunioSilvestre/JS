@@ -59,8 +59,13 @@ export default function ModuleQuestionsPage() {
       setLoading(true);
       const [modRes, qRes, catRes] = await Promise.all([
         apiGetModule(moduleId),
-        apiGetQuestions(moduleId, { search, page, limit, category: filterCategory }),
-        apiGetCategories(moduleId)
+        apiGetQuestions(moduleId, {
+          search,
+          page,
+          limit,
+          category: filterCategory,
+        }),
+        apiGetCategories(moduleId),
       ]);
       setModule(modRes.data);
       setQuestions(qRes.data);
@@ -92,14 +97,15 @@ export default function ModuleQuestionsPage() {
     }
   };
 
-  const totalPages = limit === "all" ? 1 : Math.ceil(totalQuestions / Number(limit));
+  const totalPages =
+    limit === "all" ? 1 : Math.ceil(totalQuestions / Number(limit));
 
   const handleDownloadTXT = async () => {
     try {
       showToast("Generating TXT file...");
       const res = await apiGetQuestions(moduleId, { limit: "all" });
       const allQs = res.data;
-      
+
       let text = `Module: ${module?.title || moduleId}\n`;
       text += `Total Questions: ${allQs.length}\n\n`;
       text += `=================================================\n\n`;
@@ -111,35 +117,46 @@ export default function ModuleQuestionsPage() {
         if (q.explanation) {
           text += `Explanation:\n${q.explanation}\n\n`;
         }
-        
+
         if (q.command_syntax) text += `Syntax:\n${q.command_syntax}\n\n`;
         if (q.command_options) text += `Options:\n${q.command_options}\n\n`;
-        if (q.command_arguments) text += `Arguments:\n${q.command_arguments}\n\n`;
-        if (q.command_how_it_works) text += `How It Works:\n${q.command_how_it_works}\n\n`;
-        if (q.command_system_impact) text += `System Impact:\n${q.command_system_impact}\n\n`;
-        if (q.command_troubleshooting) text += `Troubleshooting:\n${q.command_troubleshooting}\n\n`;
-        if (q.command_security) text += `Security Considerations:\n${q.command_security}\n\n`;
-        if (q.command_related) text += `Related Commands:\n${q.command_related}\n\n`;
-        
+        if (q.command_arguments)
+          text += `Arguments:\n${q.command_arguments}\n\n`;
+        if (q.command_how_it_works)
+          text += `How It Works:\n${q.command_how_it_works}\n\n`;
+        if (q.command_system_impact)
+          text += `System Impact:\n${q.command_system_impact}\n\n`;
+        if (q.command_troubleshooting)
+          text += `Troubleshooting:\n${q.command_troubleshooting}\n\n`;
+        if (q.command_security)
+          text += `Security Considerations:\n${q.command_security}\n\n`;
+        if (q.command_related)
+          text += `Related Commands:\n${q.command_related}\n\n`;
+
         if (q.command_reference) {
           text += `Raw Command Reference:\n${q.command_reference}\n\n`;
         } else if (q.command_name || q.command_description) {
           text += `Command: ${q.command_name || ""}\n`;
-          if (q.command_description) text += `Description: ${q.command_description}\n`;
-          
+          if (q.command_description)
+            text += `Description: ${q.command_description}\n`;
+
           const flags = parseFlags(q.command_flags);
-          if (flags.some(f => f.flag)) {
+          if (flags.some((f) => f.flag)) {
             text += `Flags:\n`;
-            flags.filter(f => f.flag).forEach(f => {
-              text += `  ${f.flag}  -  ${f.description || ""}\n`;
-            });
+            flags
+              .filter((f) => f.flag)
+              .forEach((f) => {
+                text += `  ${f.flag}  -  ${f.description || ""}\n`;
+              });
           }
           const examples = parseExamples(q.command_examples);
-          if (examples.some(e => e.code)) {
+          if (examples.some((e) => e.code)) {
             text += `Examples:\n`;
-            examples.filter(e => e.code).forEach(e => {
-              text += `  $ ${e.code}\n`;
-            });
+            examples
+              .filter((e) => e.code)
+              .forEach((e) => {
+                text += `  $ ${e.code}\n`;
+              });
           }
           text += `\n`;
         }
@@ -150,12 +167,12 @@ export default function ModuleQuestionsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${(module?.title || "module").replace(/\s+/g, '_')}_questions.txt`;
+      a.download = `${(module?.title || "module").replace(/\s+/g, "_")}_questions.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       showToast("TXT file downloaded!");
     } catch {
       showToast("Failed to generate TXT");
@@ -241,7 +258,10 @@ export default function ModuleQuestionsPage() {
               type="text"
               placeholder="Search questions..."
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               className="w-full bg-white border border-gray-200 text-gray-800 placeholder-slate-500 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:border-blue-500 transition text-sm"
             />
           </div>
@@ -252,7 +272,10 @@ export default function ModuleQuestionsPage() {
             />
             <select
               value={filterCategory}
-              onChange={(e) => { setFilterCategory(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setFilterCategory(e.target.value);
+                setPage(1);
+              }}
               className="bg-white border border-gray-200 text-gray-700 pl-9 pr-8 py-2.5 rounded-xl appearance-none focus:outline-none focus:border-blue-500 transition text-sm cursor-pointer"
             >
               <option value="">All Categories</option>
@@ -320,7 +343,11 @@ export default function ModuleQuestionsPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-black text-indigo-600 bg-indigo-50 border border-indigo-200 shadow-sm px-2.5 py-1 rounded-md">
-                        #{(page - 1) * (limit === "all" ? totalQuestions : Number(limit)) + index + 1}
+                        #
+                        {(page - 1) *
+                          (limit === "all" ? totalQuestions : Number(limit)) +
+                          index +
+                          1}
                       </span>
                       <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
                         {q.category}
@@ -354,7 +381,10 @@ export default function ModuleQuestionsPage() {
 
                   {/* Question */}
                   <div className="flex items-start gap-3 mb-4 mt-2">
-                    <AlertCircle size={18} className="mt-0.5 text-gray-500 flex-shrink-0" />
+                    <AlertCircle
+                      size={18}
+                      className="mt-0.5 text-gray-500 flex-shrink-0"
+                    />
                     <p className="text-[15px] text-gray-800 leading-relaxed font-medium whitespace-pre-wrap break-words">
                       {q.question_text}
                     </p>
@@ -362,7 +392,10 @@ export default function ModuleQuestionsPage() {
 
                   {/* Correct Answer */}
                   <div className="flex items-start gap-3 mb-4">
-                    <CheckCircle2 size={18} className="mt-0.5 text-emerald-500 flex-shrink-0" />
+                    <CheckCircle2
+                      size={18}
+                      className="mt-0.5 text-emerald-500 flex-shrink-0"
+                    />
                     <div className="bg-emerald-50/50 border border-emerald-200/60 rounded-xl px-4 py-3 font-mono text-sm text-emerald-700 shadow-sm w-full whitespace-pre-wrap break-words">
                       {q.correct_answer}
                     </div>
@@ -371,15 +404,26 @@ export default function ModuleQuestionsPage() {
                   {/* Explanation */}
                   {q.explanation && (
                     <div className="flex items-start gap-3 mb-4">
-                      <MessageSquare size={18} className="mt-0.5 text-blue-400 flex-shrink-0" />
+                      <MessageSquare
+                        size={18}
+                        className="mt-0.5 text-blue-400 flex-shrink-0"
+                      />
                       <div className="bg-blue-50/40 border border-blue-100 rounded-xl px-4 py-3 text-sm text-gray-600 leading-relaxed shadow-sm w-full whitespace-pre-wrap break-words">
-                        <strong className="text-gray-700 font-semibold block mb-1">Explanation:</strong>
+                        <strong className="text-gray-700 font-semibold block mb-1">
+                          Explanation:
+                        </strong>
                         {q.explanation}
                       </div>
                     </div>
                   )}
 
-                  {(q.command_name || q.command_description || flags.some((f) => f.flag) || examples.some((e) => e.code) || q.command_reference || q.command_syntax || q.command_options) && (
+                  {(q.command_name ||
+                    q.command_description ||
+                    flags.some((f) => f.flag) ||
+                    examples.some((e) => e.code) ||
+                    q.command_reference ||
+                    q.command_syntax ||
+                    q.command_options) && (
                     <div className="mt-4 pt-4 border-t border-gray-100">
                       <CommandCard
                         command={q.command_name || ""}
@@ -405,42 +449,48 @@ export default function ModuleQuestionsPage() {
         )}
       </div>
 
-      
-        {/* Pagination Controls */}
-        <div className="flex items-center justify-between mt-6 bg-white border border-gray-200 rounded-xl p-4">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">Items per page:</span>
-            <select
-              value={limit}
-              onChange={(e) => { setLimit(e.target.value === "all" ? "all" : Number(e.target.value)); setPage(1); }}
-              className="bg-gray-50 border border-gray-200 text-gray-700 py-1 px-2 rounded-lg text-sm focus:outline-none focus:border-blue-500"
-            >
-              <option value={1}>1</option>
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value="all">All</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm disabled:opacity-50 hover:bg-gray-100 text-gray-700"
-            >
-              Previous
-            </button>
-            <span className="text-sm text-gray-600">Page {page} of {totalPages}</span>
-            <button
-              disabled={page >= totalPages}
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm disabled:opacity-50 hover:bg-gray-100 text-gray-700"
-            >
-              Next
-            </button>
-          </div>
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between mt-6 bg-white border border-gray-200 rounded-xl p-4">
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-500">Items per page:</span>
+          <select
+            value={limit}
+            onChange={(e) => {
+              setLimit(
+                e.target.value === "all" ? "all" : Number(e.target.value),
+              );
+              setPage(1);
+            }}
+            className="bg-gray-50 border border-gray-200 text-gray-700 py-1 px-2 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value={1}>1</option>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value="all">All</option>
+          </select>
         </div>
+        <div className="flex items-center gap-2">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm disabled:opacity-50 hover:bg-gray-100 text-gray-700"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm disabled:opacity-50 hover:bg-gray-100 text-gray-700"
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
       {/* Toast */}
       {toast && (

@@ -31,24 +31,24 @@ try {
 // Formato: valor Tailwind para uso inline como CSS custom property
 // Usaremos hex puro para facilitar inline styles no React
 const MODULE_COLORS: Record<string, string> = {
-  "linux-study-guide":        "#6366f1", // indigo — guia geral
-  "lpi-linux-essentials":     "#10b981", // emerald — entrada/beginner
-  "lpi-security-essentials":  "#f59e0b", // amber — segurança
-  "lpic1-101-500":            "#3b82f6", // blue — LPIC-1 primeiro exame
-  "lpic1-102-500":            "#60a5fa", // blue-400 — LPIC-1 segundo exame
-  "lpic2-201-202":            "#8b5cf6", // violet — LPIC-2 avançado
-  "lfca-linux-foundation":    "#34d399", // emerald-400 — LFCA entry
-  "lfcs-linux-foundation":    "#06b6d4", // cyan — LFCS prática
-  "rhcsa-ex200":              "#ef4444", // red — Red Hat
-  "rhce-ex294":               "#dc2626", // red-600 — Red Hat avançado
-  "centos-alma-rocky":        "#f97316", // orange — enterprise RHEL compat
-  "linux-junior-track":       "#a3e635", // lime — junior/beginner track
-  "linux-mid-track":          "#eab308", // yellow — mid/sysadmin
-  "linux-senior-track":       "#ec4899", // pink — senior/SRE
+  "linux-study-guide": "#6366f1", // indigo — guia geral
+  "lpi-linux-essentials": "#10b981", // emerald — entrada/beginner
+  "lpi-security-essentials": "#f59e0b", // amber — segurança
+  "lpic1-101-500": "#3b82f6", // blue — LPIC-1 primeiro exame
+  "lpic1-102-500": "#60a5fa", // blue-400 — LPIC-1 segundo exame
+  "lpic2-201-202": "#8b5cf6", // violet — LPIC-2 avançado
+  "lfca-linux-foundation": "#34d399", // emerald-400 — LFCA entry
+  "lfcs-linux-foundation": "#06b6d4", // cyan — LFCS prática
+  "rhcsa-ex200": "#ef4444", // red — Red Hat
+  "rhce-ex294": "#dc2626", // red-600 — Red Hat avançado
+  "centos-alma-rocky": "#f97316", // orange — enterprise RHEL compat
+  "linux-junior-track": "#a3e635", // lime — junior/beginner track
+  "linux-mid-track": "#eab308", // yellow — mid/sysadmin
+  "linux-senior-track": "#ec4899", // pink — senior/SRE
   "fhs-filesystem-hierarchy": "#64748b", // slate — referência/docs
-  "shell-scripting-automation":"#14b8a6", // teal — scripting/automação
-  "lpi-devops-701":           "#a855f7", // purple — DevOps/K8s
-  "material-2026":            "#f43f5e", // rose — novo/2026
+  "shell-scripting-automation": "#14b8a6", // teal — scripting/automação
+  "lpi-devops-701": "#a855f7", // purple — DevOps/K8s
+  "material-2026": "#f43f5e", // rose — novo/2026
 };
 
 // ─── 3. Aplicar cores ────────────────────────────────────────────────────────
@@ -300,7 +300,7 @@ const MODULE_CATEGORIES: Record<string, string[]> = {
 console.log("\n📂 Step 3: Creating categories for each module...");
 
 const insertCategory = db.prepare(
-  "INSERT OR IGNORE INTO categories (module_id, name) VALUES (?, ?)"
+  "INSERT OR IGNORE INTO categories (module_id, name) VALUES (?, ?)",
 );
 
 const seedCategories = db.transaction(() => {
@@ -326,7 +326,9 @@ const seedCategories = db.transaction(() => {
 });
 
 const catResult = seedCategories();
-console.log(`\n  → ${catResult.total} categories created, ${catResult.skipped} already existed.`);
+console.log(
+  `\n  → ${catResult.total} categories created, ${catResult.skipped} already existed.`,
+);
 
 // ─── Relatório final ──────────────────────────────────────────────────────────
 console.log("\n" + "=".repeat(55));

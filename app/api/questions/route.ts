@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    let countQuery = "SELECT COUNT(*) as count FROM questions WHERE module_id = ?";
+    let countQuery =
+      "SELECT COUNT(*) as count FROM questions WHERE module_id = ?";
     let query = "SELECT * FROM questions WHERE module_id = ?";
     const params: (string | number)[] = [module_id];
 
@@ -37,9 +38,8 @@ export async function GET(req: NextRequest) {
       params.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
-    const total = (
-      db.prepare(countQuery).get(...params) as { count: number }
-    ).count;
+    const total = (db.prepare(countQuery).get(...params) as { count: number })
+      .count;
 
     query += " ORDER BY id ASC";
 
@@ -50,7 +50,12 @@ export async function GET(req: NextRequest) {
 
     const questions = db.prepare(query).all(...params);
 
-    return NextResponse.json({ data: questions, total, page, limit: limitParam === "all" ? "all" : limit });
+    return NextResponse.json({
+      data: questions,
+      total,
+      page,
+      limit: limitParam === "all" ? "all" : limit,
+    });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });

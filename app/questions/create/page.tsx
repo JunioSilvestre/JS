@@ -137,7 +137,11 @@ export default function CreateQuestionPage() {
       if (!moduleId) return;
       setLoadingQuestions(true);
       try {
-        const res = await apiGetQuestions(moduleId, { search: searchQ, limit: 50, page });
+        const res = await apiGetQuestions(moduleId, {
+          search: searchQ,
+          limit: 50,
+          page,
+        });
         setQuestions(res.data);
       } catch (err) {
         showToast((err as Error).message, "error");
@@ -189,8 +193,6 @@ export default function CreateQuestionPage() {
       commandBreakdown: { ...prev.commandBreakdown, [field]: value },
     }));
   };
-
-
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
@@ -252,7 +254,8 @@ export default function CreateQuestionPage() {
         command_arguments: formData.commandBreakdown.command_arguments,
         command_how_it_works: formData.commandBreakdown.command_how_it_works,
         command_system_impact: formData.commandBreakdown.command_system_impact,
-        command_troubleshooting: formData.commandBreakdown.command_troubleshooting,
+        command_troubleshooting:
+          formData.commandBreakdown.command_troubleshooting,
         command_security: formData.commandBreakdown.command_security,
         command_related: formData.commandBreakdown.command_related,
       };
@@ -421,9 +424,20 @@ export default function CreateQuestionPage() {
             </div>
           )}
           <div className="flex justify-between items-center mt-4 px-2">
-            <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="text-xs text-blue-600 disabled:opacity-50">Prev</button>
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="text-xs text-blue-600 disabled:opacity-50"
+            >
+              Prev
+            </button>
             <span className="text-xs text-gray-500">Page {page}</span>
-            <button onClick={() => setPage(p => p + 1)} className="text-xs text-blue-600">Next</button>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              className="text-xs text-blue-600"
+            >
+              Next
+            </button>
           </div>
         </div>
 
@@ -512,12 +526,15 @@ export default function CreateQuestionPage() {
                         </button>
                       </div>
                     </div>
-                    
+
                     {/* Content */}
                     <div className="space-y-3 pt-1">
                       {/* Question */}
                       <div className="flex items-start gap-2">
-                        <AlertCircle size={15} className="mt-0.5 text-gray-500 flex-shrink-0" />
+                        <AlertCircle
+                          size={15}
+                          className="mt-0.5 text-gray-500 flex-shrink-0"
+                        />
                         <p className="text-sm font-medium text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
                           {q.question_text}
                         </p>
@@ -526,7 +543,10 @@ export default function CreateQuestionPage() {
                       {/* Answer */}
                       {q.correct_answer && (
                         <div className="flex items-start gap-2">
-                          <CheckCircle2 size={15} className="mt-0.5 text-emerald-500 flex-shrink-0" />
+                          <CheckCircle2
+                            size={15}
+                            className="mt-0.5 text-emerald-500 flex-shrink-0"
+                          />
                           <div className="text-xs bg-emerald-50 text-emerald-700 font-mono p-1.5 rounded border border-emerald-100 whitespace-pre-wrap break-words w-full">
                             {q.correct_answer}
                           </div>
@@ -536,7 +556,10 @@ export default function CreateQuestionPage() {
                       {/* Command */}
                       {cmdPreview && (
                         <div className="flex items-start gap-2">
-                          <TerminalSquare size={15} className="mt-0.5 text-blue-500 flex-shrink-0" />
+                          <TerminalSquare
+                            size={15}
+                            className="mt-0.5 text-blue-500 flex-shrink-0"
+                          />
                           <div className="text-xs bg-gray-900 text-[#7dcfff] font-mono p-1.5 rounded border border-gray-700 whitespace-pre-wrap break-words w-full">
                             {cmdPreview}
                           </div>
@@ -796,7 +819,9 @@ export default function CreateQuestionPage() {
                       <input
                         type="text"
                         value={formData.commandBreakdown.description}
-                        onChange={(e) => updateCmd("description", e.target.value)}
+                        onChange={(e) =>
+                          updateCmd("description", e.target.value)
+                        }
                         placeholder="What does this command do?"
                         className="w-full bg-gray-50 border border-gray-200 p-3 text-gray-900 text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
                       />
@@ -805,18 +830,30 @@ export default function CreateQuestionPage() {
 
                   {/* Command Reference Sections */}
                   <div className="space-y-4 pt-6 border-t border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Command Reference Sections</h3>
-                    
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                      Command Reference Sections
+                    </h3>
+
                     {[
                       { key: "command_syntax", label: "Syntax" },
                       { key: "command_options", label: "Options" },
                       { key: "command_arguments", label: "Arguments" },
-                      { key: "command_examples", label: "Examples (Text)", realKey: "command_examples" }, // Not to be confused with structured examples
+                      {
+                        key: "command_examples",
+                        label: "Examples (Text)",
+                        realKey: "command_examples",
+                      }, // Not to be confused with structured examples
                       { key: "command_how_it_works", label: "How It Works" },
                       { key: "command_system_impact", label: "System Impact" },
-                      { key: "command_troubleshooting", label: "Troubleshooting" },
-                      { key: "command_security", label: "Security Considerations" },
-                      { key: "command_related", label: "Related Commands" }
+                      {
+                        key: "command_troubleshooting",
+                        label: "Troubleshooting",
+                      },
+                      {
+                        key: "command_security",
+                        label: "Security Considerations",
+                      },
+                      { key: "command_related", label: "Related Commands" },
                     ].map((section) => (
                       <div key={section.key} className="space-y-1.5">
                         <label className="text-sm font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2">
@@ -824,8 +861,14 @@ export default function CreateQuestionPage() {
                         </label>
                         <textarea
                           rows={3}
-                          value={formData.commandBreakdown[section.key as keyof FormState['commandBreakdown']] as string || ""}
-                          onChange={(e) => updateCmd(section.key, e.target.value)}
+                          value={
+                            (formData.commandBreakdown[
+                              section.key as keyof FormState["commandBreakdown"]
+                            ] as string) || ""
+                          }
+                          onChange={(e) =>
+                            updateCmd(section.key, e.target.value)
+                          }
                           placeholder={`Enter ${section.label.toLowerCase()}...`}
                           className="w-full bg-gray-50 border border-gray-200 p-3 text-gray-900 font-mono text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition resize-y"
                         />
@@ -841,7 +884,9 @@ export default function CreateQuestionPage() {
                     <textarea
                       rows={8}
                       value={formData.commandBreakdown.command_reference}
-                      onChange={(e) => updateCmd("command_reference", e.target.value)}
+                      onChange={(e) =>
+                        updateCmd("command_reference", e.target.value)
+                      }
                       placeholder="Paste the full ASCII reference sheet here if not using the individual sections above..."
                       className="w-full bg-gray-50 border border-gray-200 p-4 text-gray-900 font-mono text-xs rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition resize-y whitespace-pre overflow-x-auto"
                     />
@@ -966,9 +1011,15 @@ export default function CreateQuestionPage() {
                 command_syntax={formData.commandBreakdown.command_syntax}
                 command_options={formData.commandBreakdown.command_options}
                 command_arguments={formData.commandBreakdown.command_arguments}
-                command_how_it_works={formData.commandBreakdown.command_how_it_works}
-                command_system_impact={formData.commandBreakdown.command_system_impact}
-                command_troubleshooting={formData.commandBreakdown.command_troubleshooting}
+                command_how_it_works={
+                  formData.commandBreakdown.command_how_it_works
+                }
+                command_system_impact={
+                  formData.commandBreakdown.command_system_impact
+                }
+                command_troubleshooting={
+                  formData.commandBreakdown.command_troubleshooting
+                }
                 command_security={formData.commandBreakdown.command_security}
                 command_related={formData.commandBreakdown.command_related}
               />

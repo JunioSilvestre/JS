@@ -232,7 +232,9 @@ const insertMany = db.transaction((mods: ModuleData[]) => {
   let inserted = 0;
   let skipped = 0;
   for (const mod of mods) {
-    const existing = db.prepare("SELECT id FROM modules WHERE id = ?").get(mod.id);
+    const existing = db
+      .prepare("SELECT id FROM modules WHERE id = ?")
+      .get(mod.id);
     if (existing) {
       console.log(`  ⚠️  Skipped (already exists): ${mod.id}`);
       skipped++;
@@ -249,6 +251,8 @@ console.log("\n🚀 Cert-Hub Module Seeder");
 console.log("=".repeat(50));
 const result = insertMany(modules);
 console.log("=".repeat(50));
-console.log(`\n✅ Done! Inserted: ${result.inserted} | Skipped: ${result.skipped} | Total: ${modules.length}\n`);
+console.log(
+  `\n✅ Done! Inserted: ${result.inserted} | Skipped: ${result.skipped} | Total: ${modules.length}\n`,
+);
 
 db.close();

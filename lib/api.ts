@@ -79,16 +79,24 @@ export async function apiDeleteCategory(id: number) {
 // ── Questions ──────────────────────────────────────────────
 export async function apiGetQuestions(
   module_id: string,
-  params?: { category?: string; search?: string; page?: number; limit?: string | number },
+  params?: {
+    category?: string;
+    search?: string;
+    page?: number;
+    limit?: string | number;
+  },
 ) {
   const qs = new URLSearchParams({ module_id });
   if (params?.category) qs.set("category", params.category);
   if (params?.search) qs.set("search", params.search);
   if (params?.page) qs.set("page", params.page.toString());
   if (params?.limit) qs.set("limit", params.limit.toString());
-  return apiFetch<{ data: Question[]; total: number; page?: number; limit?: number | "all" }>(
-    `${BASE}/questions?${qs}`,
-  );
+  return apiFetch<{
+    data: Question[];
+    total: number;
+    page?: number;
+    limit?: number | "all";
+  }>(`${BASE}/questions?${qs}`);
 }
 
 export async function apiCreateQuestion(
@@ -123,7 +131,7 @@ export async function apiGetBashScript(id: number) {
 }
 
 export async function apiCreateBashScript(
-  data: Omit<BashScript, "id" | "created_at" | "updated_at">
+  data: Omit<BashScript, "id" | "created_at" | "updated_at">,
 ) {
   return apiFetch<{ data: BashScript }>(`${BASE}/bash`, {
     method: "POST",
@@ -131,7 +139,10 @@ export async function apiCreateBashScript(
   });
 }
 
-export async function apiUpdateBashScript(id: number, data: Partial<BashScript>) {
+export async function apiUpdateBashScript(
+  id: number,
+  data: Partial<BashScript>,
+) {
   return apiFetch<{ data: BashScript }>(`${BASE}/bash/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
@@ -229,3 +240,70 @@ export interface BashScript {
   updated_at?: string;
 }
 
+export interface InfraCategory {
+  id: string;
+  label: string;
+  type: string;
+  created_at?: string;
+}
+
+export interface InfraProject {
+  id: string;
+  category_id: string;
+  name: string;
+  reqs?: string[];
+  ext?: string;
+  level?: string;
+  time?: string;
+  priority?: string;
+  objective?: string;
+  scenario?: string;
+  prereqs?: string[];
+  certs?: string[];
+  interview?: string;
+  certTip?: string;
+  status?: string;
+  concepts?: Record<string, string>;
+  checklist?: Record<string, boolean>;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function apiGetInfraCategories() {
+  return apiFetch<{ data: InfraCategory[] }>(`${BASE}/infra-categories`);
+}
+
+export async function apiCreateInfraCategory(data: Partial<InfraCategory>) {
+  return apiFetch<{ data: InfraCategory }>(`${BASE}/infra-categories`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function apiGetInfraProjects(category_id?: string) {
+  const qs = category_id ? `?category_id=${category_id}` : "";
+  return apiFetch<{ data: InfraProject[] }>(`${BASE}/infra-projects${qs}`);
+}
+
+export async function apiCreateInfraProject(data: Partial<InfraProject>) {
+  return apiFetch<{ data: InfraProject }>(`${BASE}/infra-projects`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function apiUpdateInfraProject(
+  id: string,
+  data: Partial<InfraProject>,
+) {
+  return apiFetch<{ data: InfraProject }>(`${BASE}/infra-projects/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function apiDeleteInfraProject(id: string) {
+  return apiFetch<{ message: string }>(`${BASE}/infra-projects/${id}`, {
+    method: "DELETE",
+  });
+}

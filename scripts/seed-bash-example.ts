@@ -23,9 +23,10 @@ const anatomyData = [
         id: "sh1",
         interpreter: "/bin/bash",
         option: "-e",
-        meaning: "Executes the script using bash and exits immediately if any command fails (set -e equivalent).",
-      }
-    ]
+        meaning:
+          "Executes the script using bash and exits immediately if any command fails (set -e equivalent).",
+      },
+    ],
   },
   {
     id: "02",
@@ -35,9 +36,10 @@ const anatomyData = [
       {
         id: "opt1",
         command: "set -uo pipefail",
-        explanation: "Treat unset variables as an error (-u) and catch errors in pipelines (-o pipefail)."
-      }
-    ]
+        explanation:
+          "Treat unset variables as an error (-u) and catch errors in pipelines (-o pipefail).",
+      },
+    ],
   },
   {
     id: "03",
@@ -49,16 +51,17 @@ const anatomyData = [
         variableName: "BACKUP_DIR",
         value: "/var/backups/system",
         variableType: "Constant",
-        explanation: "Defines the destination directory for the backups."
+        explanation: "Defines the destination directory for the backups.",
       },
       {
         id: "var2",
         variableName: "TIMESTAMP",
         value: "$(date +%Y-%m-%d_%H-%M-%S)",
         variableType: "Dynamic Variable",
-        explanation: "Stores the current date and time to create unique backup filenames."
-      }
-    ]
+        explanation:
+          "Stores the current date and time to create unique backup filenames.",
+      },
+    ],
   },
   {
     id: "04",
@@ -70,9 +73,10 @@ const anatomyData = [
         functionName: "log_message",
         parameters: "$1 (The message to log)",
         returnValue: "None (echoes to stdout)",
-        explanation: "Standardized logging function that prepends a timestamp to messages."
-      }
-    ]
+        explanation:
+          "Standardized logging function that prepends a timestamp to messages.",
+      },
+    ],
   },
   {
     id: "06",
@@ -81,11 +85,12 @@ const anatomyData = [
     items: [
       {
         id: "cond1",
-        condition: "if [[ ! -d \"$BACKUP_DIR\" ]]",
+        condition: 'if [[ ! -d "$BACKUP_DIR" ]]',
         expectedResult: "Checks if the backup directory DOES NOT exist.",
-        explanation: "If the directory is missing, the script will attempt to create it using mkdir -p."
-      }
-    ]
+        explanation:
+          "If the directory is missing, the script will attempt to create it using mkdir -p.",
+      },
+    ],
   },
   {
     id: "07",
@@ -94,11 +99,12 @@ const anatomyData = [
     items: [
       {
         id: "loop1",
-        loopType: "for file in \"$@\"",
+        loopType: 'for file in "$@"',
         iterationSource: "Arguments passed to the script ($@)",
-        explanation: "Iterates over every file or directory passed as an argument to the script to back them up."
-      }
-    ]
+        explanation:
+          "Iterates over every file or directory passed as an argument to the script to back them up.",
+      },
+    ],
   },
   {
     id: "09",
@@ -107,11 +113,12 @@ const anatomyData = [
     items: [
       {
         id: "pipe1",
-        components: "tar -czf - \"$file\" | gpg --symmetric > \"$archive.gpg\"",
-        explanation: "Archives the file to stdout using tar, then pipes the output directly to gpg for encryption before writing to disk."
-      }
-    ]
-  }
+        components: 'tar -czf - "$file" | gpg --symmetric > "$archive.gpg"',
+        explanation:
+          "Archives the file to stdout using tar, then pipes the output directly to gpg for encryption before writing to disk.",
+      },
+    ],
+  },
 ];
 
 const scriptTitle = "Automated Secure Backup Script";
@@ -176,7 +183,7 @@ try {
     `
     INSERT INTO bash_scripts (title, problem, script_content, anatomy)
     VALUES (@title, @problem, @script_content, @anatomy)
-  `
+  `,
   );
 
   insert.run({
@@ -186,7 +193,9 @@ try {
     anatomy: JSON.stringify(anatomyData),
   });
 
-  console.log("✅ Success! A complete test Bash script with Anatomy was created in the database.");
+  console.log(
+    "✅ Success! A complete test Bash script with Anatomy was created in the database.",
+  );
 } catch (error) {
   console.error("❌ Error inserting test data:", error);
 }

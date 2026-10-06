@@ -3,7 +3,7 @@ import getDb from "@/lib/db";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const db = getDb();
@@ -17,13 +17,16 @@ export async function GET(
 
     return NextResponse.json({ data });
   } catch (error: unknown) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const db = getDb();
@@ -36,21 +39,30 @@ export async function PUT(
       WHERE id = ?
     `);
 
-    const result = stmt.run(data.title, data.problem, data.script_content, data.anatomy || null, id);
-    
+    const result = stmt.run(
+      data.title,
+      data.problem,
+      data.script_content,
+      data.anatomy || null,
+      id,
+    );
+
     if (result.changes === 0) {
       return NextResponse.json({ error: "Script not found" }, { status: 404 });
     }
 
     return NextResponse.json({ data: { id, ...data } });
   } catch (error: unknown) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const db = getDb();
@@ -64,6 +76,9 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Deleted successfully" });
   } catch (error: unknown) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }
