@@ -47,3 +47,12 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+# Logs
+next.log
+# App Backups
+app_backup/

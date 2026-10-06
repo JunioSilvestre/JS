@@ -250,12 +250,23 @@ export default function InfraPage() {
           concepts: {},
           checklist: {},
         };
+
+      const parseJSON = (val: any) => {
+        if (!val) return {};
+        if (typeof val === "object") return val;
+        try {
+          return JSON.parse(val);
+        } catch {
+          return {};
+        }
+      };
+
       return {
         status: p.status || "todo",
         notes: p.interview || "",
         code: p.scenario || "",
-        concepts: p.concepts || {},
-        checklist: p.checklist || {},
+        concepts: parseJSON(p.concepts),
+        checklist: parseJSON(p.checklist),
       };
     }
 
@@ -612,10 +623,22 @@ export default function InfraPage() {
       setEl("detailCertTip", p.certTip || "—");
 
       const tPrereqs = document.getElementById("detailPrereqs");
-      if (tPrereqs)
-        tPrereqs.innerHTML = (p.prereqs || ["—"])
+      if (tPrereqs) {
+        const prereqsArray = Array.isArray(p.prereqs)
+          ? p.prereqs
+          : typeof p.prereqs === "string"
+            ? (() => {
+                try {
+                  return JSON.parse(p.prereqs);
+                } catch {
+                  return [p.prereqs];
+                }
+              })()
+            : ["—"];
+        tPrereqs.innerHTML = (prereqsArray.length ? prereqsArray : ["—"])
           .map((x: string) => `<li>${x}</li>`)
           .join("");
+      }
       const tCerts = document.getElementById("detailCerts");
       if (tCerts)
         tCerts.innerHTML =
@@ -1051,7 +1074,7 @@ export default function InfraPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 p-6 md:p-8 flex flex-col">
+    <div className="max-w-6xl mx-auto space-y-6">
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -1080,130 +1103,13 @@ export default function InfraPage() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto w-full">
-        {/* Navigation */}
-        <Link
-          href="/"
-          className="text-gray-500 hover:text-gray-900 flex items-center gap-2 mb-6 transition text-sm group w-max"
-        >
-          <ArrowLeft
-            size={16}
-            className="group-hover:-translate-x-1 transition-transform"
-          />
-          Back to Dashboard
-        </Link>
-
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-2xl p-4 mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow">
-                IH
-              </div>
-              <div>
-                <h1 className="text-xl font-bold tracking-tight leading-none">
-                  Infra Híbrida
-                </h1>
-                <p className="text-xs text-slate-500 mt-1">
-                  Linux + Windows · Físico · Híbrido · Cloud · CT/MA/NY
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                id="searchInput"
-                type="search"
-                placeholder="Buscar projeto, skill, cert..."
-                className="hidden sm:block w-56 pl-3 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-          </div>
-        </header>
-
-        {/* LIST VIEW */}
         <div id="listView">
-          {/* Market banner */}
-          <div className="mb-5 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 p-4">
-            <p className="text-sm font-semibold text-indigo-800 dark:text-indigo-200">
-              Alvo de mercado: CT · MA · NY
-            </p>
-            <p className="text-xs text-indigo-700 dark:text-indigo-300 mt-1">
-              Vagas pedem: Windows Server + AD · Linux (RHEL-like) · VMware ·
-              PowerShell/Bash · Azure híbrido · patch/hardening · backup/DR ·
-              automação (Ansible/Terraform como diferencial).
-            </p>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <p className="text-[10px] font-medium text-slate-500 uppercase">
-                Projetos
-              </p>
-              <p className="text-xl font-bold mt-0.5" id="statTotal">
-                0
-              </p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <p className="text-[10px] font-medium text-slate-500 uppercase">
-                Concluídos
-              </p>
-              <p
-                className="text-xl font-bold mt-0.5 text-emerald-600"
-                id="statDone"
-              >
-                0
-              </p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <p className="text-[10px] font-medium text-slate-500 uppercase">
-                Prioridade alta
-              </p>
-              <p
-                className="text-xl font-bold mt-0.5 text-red-600"
-                id="statAlta"
-              >
-                0
-              </p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <p className="text-[10px] font-medium text-slate-500 uppercase">
-                Progresso
-              </p>
-              <p className="text-xl font-bold mt-0.5" id="statPct">
-                0%
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 border border-slate-200 dark:border-slate-700 shadow-sm mb-5">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-medium">Progresso de estudo</span>
-              <span className="text-xs text-slate-500" id="progressText">
-                0 / 0
-              </span>
-            </div>
-            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-              <div
-                id="progressBar"
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all"
-                style={{ width: "0%" }}
-              ></div>
-            </div>
-          </div>
-
           {/* Tabs dinâmicas */}
           <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 mb-4">
             <div
               id="tabsBar"
               className="flex overflow-x-auto gap-1 flex-1"
             ></div>
-            <button
-              id="btnOpenRegister"
-              className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg border border-dashed border-indigo-400 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-            >
-              + Cadastrar
-            </button>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 mb-4">
@@ -1512,7 +1418,6 @@ export default function InfraPage() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* MODAL CADASTRO */}
       <div

@@ -23,6 +23,7 @@ import {
   Code,
 } from "lucide-react";
 import CommandCard from "../../components/CommandCard";
+import SpellCheckedTextarea from "@/app/components/SpellCheckedTextarea";
 import {
   apiGetModules,
   apiGetCategories,
@@ -742,7 +743,7 @@ export default function CreateQuestionPage() {
                   <label className="text-xs font-semibold text-gray-500 flex items-center gap-1">
                     Question Text <span className="text-red-400">*</span>
                   </label>
-                  <textarea
+                  <SpellCheckedTextarea
                     rows={3}
                     value={formData.question}
                     onChange={(e) => updateField("question", e.target.value)}
@@ -782,7 +783,7 @@ export default function CreateQuestionPage() {
                   <label className="text-xs font-semibold text-gray-500">
                     Explanation
                   </label>
-                  <textarea
+                  <SpellCheckedTextarea
                     rows={3}
                     value={formData.explanation}
                     onChange={(e) => updateField("explanation", e.target.value)}
@@ -816,7 +817,8 @@ export default function CreateQuestionPage() {
                       <label className="text-sm font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2">
                         <AlignLeft size={14} /> Short Description
                       </label>
-                      <input
+                      <SpellCheckedTextarea
+                        asInput
                         type="text"
                         value={formData.commandBreakdown.description}
                         onChange={(e) =>
@@ -859,19 +861,35 @@ export default function CreateQuestionPage() {
                         <label className="text-sm font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2">
                           <AlignLeft size={14} /> {section.label}
                         </label>
-                        <textarea
-                          rows={3}
-                          value={
-                            (formData.commandBreakdown[
-                              section.key as keyof FormState["commandBreakdown"]
-                            ] as string) || ""
-                          }
-                          onChange={(e) =>
-                            updateCmd(section.key, e.target.value)
-                          }
-                          placeholder={`Enter ${section.label.toLowerCase()}...`}
-                          className="w-full bg-gray-50 border border-gray-200 p-3 text-gray-900 font-mono text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition resize-y"
-                        />
+                        {["command_how_it_works", "command_system_impact", "command_troubleshooting", "command_security", "command_examples"].includes(section.key) ? (
+                          <SpellCheckedTextarea
+                            rows={3}
+                            value={
+                              (formData.commandBreakdown[
+                                section.key as keyof FormState["commandBreakdown"]
+                              ] as string) || ""
+                            }
+                            onChange={(e) =>
+                              updateCmd(section.key, e.target.value)
+                            }
+                            placeholder={`Enter ${section.label.toLowerCase()}...`}
+                            className="w-full bg-gray-50 border border-gray-200 p-3 text-gray-900 font-mono text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition resize-y"
+                          />
+                        ) : (
+                          <textarea
+                            rows={3}
+                            value={
+                              (formData.commandBreakdown[
+                                section.key as keyof FormState["commandBreakdown"]
+                              ] as string) || ""
+                            }
+                            onChange={(e) =>
+                              updateCmd(section.key, e.target.value)
+                            }
+                            placeholder={`Enter ${section.label.toLowerCase()}...`}
+                            className="w-full bg-gray-50 border border-gray-200 p-3 text-gray-900 font-mono text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition resize-y"
+                          />
+                        )}
                       </div>
                     ))}
                   </div>

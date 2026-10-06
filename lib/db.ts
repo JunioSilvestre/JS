@@ -1,11 +1,15 @@
 import Database from "better-sqlite3";
 import path from "path";
 
-const dbPath = path.join(process.cwd(), "cert-hub.db");
-
 let db: Database.Database;
 
 function getDb(): Database.Database {
+  const dbPath = process.env.DB_PATH || path.join(process.cwd(), "cert-hub.db");
+
+  if (process.env.NODE_ENV === "test" && (!dbPath.includes("test") || dbPath.endsWith("cert-hub.db"))) {
+    throw new Error(`ABORT: Cannot run tests against production/dev database (${dbPath}). DB_PATH must include 'test'.`);
+  }
+
   if (!db) {
     db = new Database(dbPath);
     db.pragma("journal_mode = WAL");
@@ -24,6 +28,7 @@ function initSchema(database: Database.Database): void {
       provider TEXT,
       certification TEXT,
       difficulty TEXT CHECK(difficulty IN ('Beginner','Intermediate','Advanced')),
+      color TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );

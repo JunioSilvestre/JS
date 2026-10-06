@@ -14,6 +14,7 @@ import { apiCreateBashScript } from "@/lib/api";
 import BashAnatomyBuilder, {
   AnatomySection,
 } from "@/app/components/BashAnatomyBuilder";
+import SpellCheckedTextarea from "@/app/components/SpellCheckedTextarea";
 
 export default function CreateBashScriptPage() {
   const router = useRouter();
@@ -118,7 +119,8 @@ export default function CreateBashScriptPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                   Title
                 </label>
-                <input
+                <SpellCheckedTextarea
+                  asInput
                   type="text"
                   placeholder="e.g. Find and delete old logs"
                   value={formData.title}
@@ -133,7 +135,7 @@ export default function CreateBashScriptPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                   The Problem (Question)
                 </label>
-                <textarea
+                <SpellCheckedTextarea
                   placeholder="Describe the problem to solve..."
                   value={formData.problem}
                   onChange={(e) =>

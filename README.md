@@ -14,6 +14,14 @@ pnpm dev
 bun dev
 ```
 
+### LanguageTool (Spell Checker)
+To use the local spell checker, you must run the LanguageTool server:
+```bash
+npm run lt:start
+```
+Ensure you have Java 17+ installed. The server will run on port 8010.
+
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.

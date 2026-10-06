@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import SpellCheckedTextarea from "./SpellCheckedTextarea";
 
 export interface AnatomySection {
   id: string;
@@ -158,6 +159,27 @@ export default function BashAnatomyBuilder({
           <div className="text-sm text-gray-800 bg-gray-50 p-3 rounded-lg border border-gray-200 whitespace-pre-wrap font-mono">
             {item[field]}
           </div>
+        </div>
+      );
+    }
+
+    const needsSpellCheck = ["explanation", "purpose", "notes", "description", "meaning"].includes(field);
+
+    if (needsSpellCheck) {
+      return (
+        <div className="mb-4">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+            {label}
+          </label>
+          <SpellCheckedTextarea
+            asInput={!isTextArea}
+            type={!isTextArea ? "text" : undefined}
+            value={item[field] || ""}
+            onChange={(e) =>
+              updateItem(sectionId, itemId, field, e.target.value)
+            }
+            className={`w-full bg-white border border-gray-200 text-gray-900 font-mono text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition-all ${isTextArea ? "resize-y min-h-[80px]" : ""}`}
+          />
         </div>
       );
     }

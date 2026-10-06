@@ -286,9 +286,9 @@ export default function PrintClient({
                   {filterCat || "All Categories"}
                 </div>
                 <div style={{ marginTop: "3pt" }}>
-                  {new Date().toLocaleDateString("pt-BR", {
-                    day: "2-digit",
+                  {new Date().toLocaleDateString("en-US", {
                     month: "long",
+                    day: "numeric",
                     year: "numeric",
                   })}
                 </div>
@@ -627,7 +627,7 @@ export default function PrintClient({
             <span>
               {filterCat || "All Categories"} • {filteredQ.length} questions
             </span>
-            <span>Generated {new Date().toLocaleDateString("pt-BR")}</span>
+            <span>Generated {new Date().toLocaleDateString("en-US")}</span>
           </div>
         </div>
       </div>

@@ -135,9 +135,8 @@ export default function Home() {
         setDeleting(null);
         setPendingDelete(null);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [showToast],
+    [showToast, loadModules],
   );
 
   // Sort modules client-side
@@ -178,141 +177,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f5f5f5]">
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-white border-r border-gray-200 hidden md:flex flex-col">
-        <div className="p-6 flex items-center gap-3 border-b border-gray-200">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-500/25">
-            C
-          </div>
-          <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 text-lg">
-            Cert-Hub
-          </span>
-        </div>
-
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20 text-sm"
-          >
-            <LayoutGrid size={18} /> Modules
-          </Link>
-          <Link
-            href="/questions/create"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm"
-          >
-            <FilePlus2 size={18} /> Questions
-          </Link>
-          <Link
-            href="/bash"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm"
-          >
-            <Terminal size={18} /> Bash
-          </Link>
-          <Link
-            href="/infra"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm"
-          >
-            <Layers size={18} /> Infra Híbrida
-          </Link>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium w-full text-left text-sm">
-            <Settings size={18} /> Settings
-          </button>
-        </nav>
-
-        {/* Stats */}
-        <div className="p-4 border-t border-gray-200 space-y-2">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-            Overview
-          </p>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Modules</span>
-            <span className="text-gray-900 font-bold">{stats.total}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Questions</span>
-            <span className="text-gray-900 font-bold">{stats.questions}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Providers</span>
-            <span className="text-gray-900 font-bold">{stats.providers}</span>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-[#f5f5f5] relative">
-        {/* Header */}
-        <header className="h-20 flex-shrink-0 flex items-center justify-between px-8 border-b border-gray-200 bg-[#f5f5f5]/80 backdrop-blur-md z-10">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              Modules Management
-            </h1>
-            <p className="text-sm text-gray-500">
-              Create, edit, and organize certification modules
-            </p>
-          </div>
-          <Link
-            href="/modules/create"
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition shadow-lg shadow-indigo-500/25 border border-indigo-500 text-sm"
-          >
-            <FilePlus2 size={18} /> Create Module
-          </Link>
-        </header>
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Search and Filters */}
-            <div className="flex flex-wrap gap-3">
-              <div className="flex-1 min-w-[200px] relative">
-                <Search
-                  size={18}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"
-                />
-                <input
-                  type="text"
-                  placeholder="Search modules by title, description or certification..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-white border border-gray-300 text-gray-900 placeholder-slate-500 rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition text-sm"
-                />
-              </div>
-              <div className="relative">
-                <Filter
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                />
-                <select
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value)}
-                  className="bg-white border border-gray-300 hover:border-slate-500 text-gray-700 pl-9 pr-8 py-3 rounded-xl transition appearance-none focus:outline-none focus:border-indigo-500 text-sm cursor-pointer"
-                >
-                  <option value="">All Levels</option>
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Advanced">Advanced</option>
-                </select>
-              </div>
-              <div className="relative">
-                <ArrowUpDown
-                  size={15}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-white border border-gray-300 hover:border-slate-500 text-gray-700 pl-9 pr-8 py-3 rounded-xl transition appearance-none focus:outline-none focus:border-indigo-500 text-sm cursor-pointer"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="az">A → Z</option>
-                  <option value="za">Z → A</option>
-                  <option value="questions">Most Questions</option>
-                </select>
-              </div>
-            </div>
-
+    <div className="max-w-6xl mx-auto space-y-6">
             {/* Loading */}
             {loading && (
               <div className="flex items-center justify-center py-24 text-gray-500">
@@ -350,20 +215,20 @@ export default function Home() {
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">
                       {search || difficulty
-                        ? "Nenhum resultado encontrado"
-                        : "Nenhum módulo ou projeto ainda"}
+                        ? "No results found"
+                        : "No modules or projects yet"}
                     </h3>
                     <p className="text-gray-500 mb-6 max-w-sm mx-auto">
                       {search || difficulty
-                        ? "Tente ajustar seus filtros de busca."
-                        : "Crie seu primeiro módulo ou projeto de infraestrutura."}
+                        ? "Try adjusting your search filters."
+                        : "Create your first module or infrastructure project."}
                     </p>
                     {!search && !difficulty && (
                       <Link
                         href="/modules/create"
                         className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition text-sm"
                       >
-                        <FilePlus2 size={18} /> Criar Primeiro Módulo
+                        <FilePlus2 size={18} /> Create First Module
                       </Link>
                     )}
                   </div>
@@ -418,7 +283,7 @@ export default function Home() {
                         {/* Badges */}
                         <div className="flex flex-wrap items-center gap-2 mb-2">
                           <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                            Infra Híbrida
+                            Hybrid Infra
                           </span>
                           <span
                             className={`text-xs font-medium px-2 py-0.5 rounded-md border ${
@@ -430,10 +295,10 @@ export default function Home() {
                             }`}
                           >
                             {proj.level === "basico"
-                              ? "Básico"
+                              ? "Beginner"
                               : proj.level === "intermediario"
-                                ? "Intermediário"
-                                : "Avançado"}
+                                ? "Intermediate"
+                                : "Advanced"}
                           </span>
                         </div>
 
@@ -460,7 +325,7 @@ export default function Home() {
                           <div className="flex items-center gap-3 text-sm text-gray-500">
                             <span className="flex items-center gap-1.5">
                               <Layers size={14} />
-                              Projeto
+                              Project
                             </span>
                           </div>
                           <Link
@@ -583,9 +448,7 @@ export default function Home() {
                 )}
               </>
             )}
-          </div>
-        </div>
-      </main>
+          
 
       {/* Delete Confirm Modal */}
       <DeleteConfirmModal

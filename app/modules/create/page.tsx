@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import SpellCheckedTextarea from "@/app/components/SpellCheckedTextarea";
 import {
   apiCreateModule,
   apiGetModule,
@@ -213,7 +214,8 @@ function CreateModuleForm() {
             <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
               Module Title <span className="text-red-400">*</span>
             </label>
-            <input
+            <SpellCheckedTextarea
+              asInput
               type="text"
               placeholder="e.g. System Architecture"
               value={formData.title}
@@ -237,7 +239,7 @@ function CreateModuleForm() {
             <label className="text-sm font-semibold text-gray-700">
               Description
             </label>
-            <textarea
+            <SpellCheckedTextarea
               rows={3}
               placeholder="Provide a brief description of the module contents..."
               value={formData.description}

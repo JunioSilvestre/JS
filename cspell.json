@@ -1,0 +1,21 @@
+{
+  "version": "0.2",
+  "language": "en,pt",
+  "words": [
+    "lucide",
+    "tailwindcss",
+    "tsx",
+    "nextjs",
+    "playwright"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".next/**",
+    "dist/**",
+    "package-lock.json",
+    "public/**",
+    "**/*.sqlite",
+    "**/*.db-shm",
+    "**/*.db-wal"
+  ]
+}
