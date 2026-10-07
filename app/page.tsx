@@ -9,6 +9,9 @@ import {
   apiGetInfraProjects,
   apiDeleteInfraProject,
   InfraProject,
+  apiGetProjetos,
+  apiDeleteProjeto,
+  ProjetoSenior,
 } from "@/lib/api";
 import { useToast } from "@/app/components/ui/ToastProvider";
 import DeleteConfirmModal, {
@@ -29,6 +32,7 @@ import {
   Loader2,
   Terminal,
   ArrowUpDown,
+  FolderOpen,
 } from "lucide-react";
 
 const DIFFICULTY_COLORS: Record<string, string> = {
@@ -67,6 +71,7 @@ function timeAgo(dateStr: string): string {
 export default function Home() {
   const [modules, setModules] = useState<Module[]>([]);
   const [infraProjects, setInfraProjects] = useState<InfraProject[]>([]);
+  const [projetos, setProjetos] = useState<ProjetoSenior[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -93,6 +98,9 @@ export default function Home() {
       setModules(res.data);
       const infraRes = await apiGetInfraProjects();
       setInfraProjects(infraRes.data || []);
+      
+      const projRes = await apiGetProjetos();
+      setProjetos(projRes || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load modules");
     } finally {
@@ -116,13 +124,15 @@ export default function Home() {
   };
 
   const executeDelete = useCallback(
-    async (id: string, title: string, type: "module" | "infra" = "module") => {
-      setDeleting(id);
+    async (id: string | number, title: string, type: "module" | "infra" | "projeto" = "module") => {
+      setDeleting(id.toString());
       try {
         if (type === "infra") {
-          await apiDeleteInfraProject(id);
+          await apiDeleteInfraProject(id.toString());
+        } else if (type === "projeto") {
+          await apiDeleteProjeto(id as number);
         } else {
-          await apiDeleteModule(id);
+          await apiDeleteModule(id.toString());
         }
         showToast(`Module "${title}" deleted`, "success");
         loadModules();
@@ -147,6 +157,19 @@ export default function Home() {
     .sort((a, b) => {
       if (sortBy === "az") return a.name.localeCompare(b.name);
       if (sortBy === "za") return b.name.localeCompare(a.name);
+      return (
+        new Date(b.created_at || 0).getTime() -
+        new Date(a.created_at || 0).getTime()
+      );
+    });
+
+  const sortedProjetos = [...projetos]
+    .filter(
+      (p) => !search || p.title.toLowerCase().includes(search.toLowerCase()),
+    )
+    .sort((a, b) => {
+      if (sortBy === "az") return a.title.localeCompare(b.title);
+      if (sortBy === "za") return b.title.localeCompare(a.title);
       return (
         new Date(b.created_at || 0).getTime() -
         new Date(a.created_at || 0).getTime()
@@ -205,6 +228,7 @@ export default function Home() {
               <>
                 {modules.length === 0 &&
                 sortedInfra.length === 0 &&
+                sortedProjetos.length === 0 &&
                 (!search ||
                   !"infra híbrida linux windows cloud".includes(
                     search.toLowerCase(),
@@ -234,6 +258,64 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {/* Dynamic Projetos Senior */}
+                    {sortedProjetos.map((proj) => (
+                      <div
+                        key={`proj-${proj.id}`}
+                        className="group bg-white border border-gray-300 rounded-2xl p-6 transition-all shadow-sm hover:shadow-xl relative overflow-hidden flex flex-col"
+                        style={{ borderTop: `4px solid #10b981` }}
+                      >
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                          <button
+                            onClick={() => {
+                              setPendingDelete({
+                                id: proj.id.toString(),
+                                title: proj.title,
+                              });
+                              confirmDelete({
+                                title: `Delete "${proj.title}"?`,
+                                description: "This will permanently delete the project. This cannot be undone.",
+                                onConfirm: () => executeDelete(proj.id, proj.title, "projeto"),
+                              });
+                            }}
+                            disabled={deleting === proj.id.toString()}
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition disabled:opacity-50"
+                          >
+                            {deleting === proj.id.toString() ? (
+                              <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={14} />
+                            )}
+                          </button>
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-105 transition-transform flex-shrink-0 bg-emerald-50 text-emerald-500">
+                          <FolderOpen size={24} />
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                            Estudo de Caso
+                          </span>
+                        </div>
+
+                        <h3 className="text-base font-bold text-gray-900 mb-1.5">{proj.title}</h3>
+                        <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">{proj.scenario}</p>
+
+                        <div className="flex items-center justify-between border-t border-gray-300 pt-4 mt-auto">
+                          <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <span className="flex items-center gap-1.5">
+                              <Terminal size={14} />
+                              Senior Project
+                            </span>
+                          </div>
+                          <Link href={`/projetos/${proj.id}`} className="flex items-center gap-1 text-xs font-medium text-emerald-500 hover:text-emerald-400 transition">
+                            Open <ChevronRight size={14} />
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+
                     {/* Dynamic Infra */}
                     {sortedInfra.map((proj) => (
                       <div

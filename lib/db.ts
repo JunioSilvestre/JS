@@ -87,6 +87,22 @@ function initSchema(database: Database.Database): void {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS senior_projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      scenario TEXT NOT NULL,
+      requirements TEXT NOT NULL,
+      duration TEXT NOT NULL,
+      dependencies TEXT,
+      detailed_description TEXT,
+      technologies TEXT,
+      code_examples TEXT,
+      references_links TEXT,
+      mock_test_logs TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS infra_projects (
       id TEXT PRIMARY KEY,
       category_id TEXT NOT NULL,

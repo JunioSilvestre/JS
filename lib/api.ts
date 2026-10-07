@@ -307,3 +307,30 @@ export async function apiDeleteInfraProject(id: string) {
     method: "DELETE",
   });
 }
+
+// ── Projetos Senior ─────────────────────────────────────────
+export interface ProjetoSenior {
+  id: number;
+  title: string;
+  scenario: string;
+  requirements: string;
+  duration: string;
+  dependencies: string;
+  detailed_description: string;
+  technologies: string;
+  code_examples: string;
+  references_links: string;
+  mock_test_logs?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function apiGetProjetos() {
+  return apiFetch<ProjetoSenior[]>(`${BASE}/projetos`);
+}
+
+export async function apiDeleteProjeto(id: number) {
+  return apiFetch<{ message: string }>(`${BASE}/projetos/${id}`, {
+    method: "DELETE",
+  });
+}
