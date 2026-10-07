@@ -21,10 +21,11 @@ import {
 
 const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"] as const;
 const PROVIDERS = [
-  "LPI",
+  "Linux Professional Institute (LPI)",
+  "Linux Foundation",
+  "Microsoft",
   "AWS",
   "GCP",
-  "Azure",
   "CompTIA",
   "Cisco",
   "HashiCorp",
@@ -187,7 +188,7 @@ function CreateModuleForm() {
               type="text"
               placeholder="e.g. lpic1-101-500"
               value={formData.id}
-              onChange={(e) => handleChange("id", e.target.value.toLowerCase())}
+              onChange={(e) => handleChange("id", e.target.value.toLowerCase().trim())}
               disabled={isEdit}
               className={`w-full bg-[#f5f5f5] border rounded-xl px-4 py-3 text-gray-900 font-mono text-sm focus:outline-none transition ${
                 errors.id

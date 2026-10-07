@@ -198,7 +198,7 @@ export default function ModuleQuestionsPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header */}
       <header className="sticky top-0 z-20 bg-gray-50/90 backdrop-blur-md border-b border-gray-200 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="w-full mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
@@ -246,7 +246,7 @@ export default function ModuleQuestionsPage() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="w-full mx-auto px-6 py-6">
         {/* Filters */}
         <div className="flex gap-3 mb-6">
           <div className="relative flex-1 max-w-sm">

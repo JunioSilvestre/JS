@@ -17,6 +17,8 @@ import {
   Eye,
   X,
   ChevronDown,
+  ChevronRight,
+  ChevronLeft,
   FolderPlus,
   Terminal,
   AlignLeft,
@@ -94,6 +96,7 @@ export default function CreateQuestionPage() {
   const [saving, setSaving] = useState(false);
   const [loadingModules, setLoadingModules] = useState(true);
   const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error";
@@ -363,17 +366,28 @@ export default function CreateQuestionPage() {
   return (
     <div className="flex h-screen bg-gray-50 text-[#e6e9ef] font-sans overflow-hidden">
       {/* Sidebar - Questions List */}
-      <aside className="w-72 bg-gray-100 border-r border-gray-200 flex flex-col flex-shrink-0">
+      <aside className={`bg-gray-100 border-r border-gray-200 flex flex-col flex-shrink-0 transition-all duration-300 relative ${isSidebarCollapsed ? "w-16" : "w-72"}`}>
+        <button
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className="absolute -right-3 top-4 bg-white border border-gray-200 rounded-full p-1 text-gray-500 hover:text-indigo-600 hover:border-indigo-300 shadow-sm transition z-50"
+        >
+          {isSidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
+
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-gray-900 font-bold text-xs">
+        <div className={`p-4 border-b border-gray-200 flex items-center ${isSidebarCollapsed ? "justify-center px-0 gap-0" : "gap-3"}`}>
+          <div className="w-7 h-7 flex-shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
             C
           </div>
-          <h1 className="text-base font-bold text-gray-900">Cert-Hub</h1>
+          <h1 className={`text-base font-bold text-gray-900 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>
+            Cert-Hub
+          </h1>
         </div>
 
-        {/* Back & Module Selector */}
-        <div className="p-3 border-b border-gray-200 space-y-2">
+        <div className={`flex flex-col flex-1 overflow-hidden transition-opacity duration-300 ${isSidebarCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+          <div className="flex flex-col flex-1 w-[288px]">
+            {/* Back & Module Selector */}
+          <div className="p-3 border-b border-gray-200 space-y-2">
           <Link
             href="/"
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition text-sm font-medium"
@@ -582,6 +596,8 @@ export default function CreateQuestionPage() {
           >
             <Plus size={16} /> New Question
           </button>
+        </div>
+        </div>
         </div>
       </aside>
 
