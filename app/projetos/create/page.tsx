@@ -12,7 +12,7 @@ export default function CreateProjectPage() {
     title: "",
     scenario: "",
     requirements: "",
-    duration: "1h",
+    duration: "",
     dependencies: "",
     detailed_description: "",
     technologies: "",
@@ -33,7 +33,7 @@ export default function CreateProjectPage() {
         router.push("/projetos");
         router.refresh();
       } else {
-        alert("Erro ao criar projeto");
+        alert("Error creating project");
       }
     } catch (error) {
       console.error(error);
@@ -51,16 +51,16 @@ export default function CreateProjectPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
             <FolderOpen className="text-indigo-600" />
-            Adicionar Novo Projeto
+            Add New Project
           </h1>
-          <p className="text-gray-500 text-sm">Crie um novo cenário de treinamento Sênior</p>
+          <p className="text-gray-500 text-sm">Create a new Senior training scenario</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Título do Projeto</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Project Title</label>
             <input 
               required
               type="text"
@@ -72,7 +72,7 @@ export default function CreateProjectPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Cenário (Enunciado)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Scenario (Prompt)</label>
             <textarea 
               required
               rows={4}
@@ -93,27 +93,28 @@ export default function CreateProjectPage() {
               value={formData.requirements}
               onChange={e => setFormData({...formData, requirements: e.target.value})}
             />
-            <p className="text-xs text-gray-400 mt-1">Separe por vírgulas</p>
+            <p className="text-xs text-gray-400 mt-1">Comma separated</p>
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Duração Estimada</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Duration</label>
             <select 
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"
               value={formData.duration}
               onChange={e => setFormData({...formData, duration: e.target.value})}
             >
-              <option value="1h">1 Hora (Troubleshoot)</option>
-              <option value="4h">4 Horas (Intermediário)</option>
-              <option value="8h">8 Horas (Arquitetura Menor)</option>
-              <option value="16h">16 Horas (Mini-Arquitetura)</option>
-              <option value="1w">1 Semana (Sub-sistema)</option>
-              <option value="1m">1 Mês (Transformação)</option>
+              <option value="" disabled>Select...</option>
+              <option value="1h">1 Hour (Troubleshoot)</option>
+              <option value="4h">4 Hours (Intermediate)</option>
+              <option value="8h">8 Hours (Minor Architecture)</option>
+              <option value="16h">16 Hours (Mini-Architecture)</option>
+              <option value="1w">1 Week (Sub-system)</option>
+              <option value="1m">1 Month (Transformation)</option>
             </select>
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Dependências Prévias (Opcional)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Prior Dependencies (Optional)</label>
             <input 
               type="text"
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"
@@ -128,7 +129,7 @@ export default function CreateProjectPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Detalhes e Arquitetura</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Details and Architecture</label>
             <textarea 
               rows={6}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -139,7 +140,7 @@ export default function CreateProjectPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Exemplos de Código (Arquivos, Configurações, Scripts)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Exemplos de Código (Arquivos, Settings, Scripts)</label>
             <textarea 
               rows={6}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -150,7 +151,7 @@ export default function CreateProjectPage() {
           </div>
 
           <div className="md:col-span-1">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Tecnologias (Detalhado)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Technologies (Detailed)</label>
             <textarea 
               rows={4}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -161,7 +162,7 @@ export default function CreateProjectPage() {
           </div>
 
           <div className="md:col-span-1">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Links e Referências</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Links and References</label>
             <textarea 
               rows={4}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -177,7 +178,7 @@ export default function CreateProjectPage() {
             href="/projetos"
             className="px-5 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
           >
-            Cancelar
+            Cancel
           </Link>
           <button 
             disabled={loading}
@@ -189,7 +190,7 @@ export default function CreateProjectPage() {
             ) : (
               <Save size={20} />
             )}
-            Salvar Projeto
+            Save Projeto
           </button>
         </div>
       </form>

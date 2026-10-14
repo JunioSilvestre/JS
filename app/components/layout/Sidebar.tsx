@@ -62,20 +62,12 @@ export default function Sidebar() {
           <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>All Modules</span>
         </Link>
         <Link
-          href="/linux"
+          href="/terminal"
           className={`flex items-center py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm ${isCollapsed ? "justify-center w-12 px-0 gap-0" : "w-[calc(100%-1.5rem)] px-3 mx-3 gap-3"}`}
-          title="Linux"
-        >
-          <Server size={18} className="flex-shrink-0" /> 
-          <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>Linux</span>
-        </Link>
-        <Link
-          href="/bash"
-          className={`flex items-center py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-slate-800/50 transition font-medium text-sm ${isCollapsed ? "justify-center w-12 px-0 gap-0" : "w-[calc(100%-1.5rem)] px-3 mx-3 gap-3"}`}
-          title="Bash"
+          title="Terminal & Shell"
         >
           <Terminal size={18} className="flex-shrink-0" /> 
-          <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>Bash</span>
+          <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>Terminal & Shell</span>
         </Link>
         <Link
           href="/questions/create"

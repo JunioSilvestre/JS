@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     "scripts/**",
     "tests/**",
     "app_backup/**",
+    "proxy3000.js",
   ]),
   {
     rules: {

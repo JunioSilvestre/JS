@@ -111,13 +111,13 @@ export default function ProjetoViewPage({ params }: { params: Promise<{ id: stri
               href={`/projetos/${project.id}/edit`} 
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
             >
-              Editar 
+              Edit 
             </Link>
             <Link 
               href="/projetos" 
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
             >
-              Voltar
+              Back
             </Link>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function ProjetoViewPage({ params }: { params: Promise<{ id: stri
             {project.detailed_description && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-6 sm:p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-4 mb-6">Detalhes e Arquitetura</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-4 mb-6">Details and Architecture</h2>
                   <div className="prose prose-indigo prose-lg max-w-none">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {project.detailed_description}
@@ -234,7 +234,7 @@ export default function ProjetoViewPage({ params }: { params: Promise<{ id: stri
                     </ReactMarkdown>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 italic">Nenhuma tecnologia detalhada.</p>
+                  <p className="text-sm text-gray-500 italic">No technologies detailed.</p>
                 )}
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function ProjetoViewPage({ params }: { params: Promise<{ id: stri
             {project.references_links && (
               <div className="bg-gray-50 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-3 mb-4">Links e Referências</h3>
+                  <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-3 mb-4">Links and References</h3>
                   <div className="prose prose-sm prose-indigo max-w-none prose-a:text-indigo-600 hover:prose-a:text-indigo-500">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {project.references_links}

@@ -54,5 +54,6 @@ node_modules/
 *.db-wal
 # Logs
 next.log
+proxy3000.js
 # App Backups
 app_backup/

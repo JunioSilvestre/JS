@@ -35,7 +35,7 @@ export default function ProjetosPage() {
   }, []);
 
   const deleteProject = async (id: number) => {
-    if (!confirm("Tem certeza que deseja excluir este projeto?")) return;
+    if (!confirm("Are you sure you want to delete this project?")) return;
     
     try {
       const res = await fetch(`/api/projetos/${id}`, { method: "DELETE" });
@@ -53,16 +53,16 @@ export default function ProjetosPage() {
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center gap-3">
             <FolderOpen className="text-indigo-500" size={32} />
-            Estudos de Caso & Engenharia
+            Case Studies & Engineering
           </h1>
-          <p className="text-gray-500 mt-2 font-medium">Soluções reais de infraestrutura, cloud e alta disponibilidade para desafios corporativos.</p>
+          <p className="text-gray-500 mt-2 font-medium">Real-world infrastructure, cloud, and high-availability solutions for corporate challenges.</p>
         </div>
         <Link 
           href="/projetos/create"
           className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-semibold shadow-lg shadow-indigo-200 transition-all transform hover:scale-105"
         >
           <PlusCircle size={20} />
-          Novo Projeto
+          New Project
         </Link>
       </div>
 
@@ -73,10 +73,10 @@ export default function ProjetosPage() {
       ) : projects.length === 0 ? (
         <div className="text-center bg-white p-16 rounded-2xl shadow-sm border border-gray-200 border-dashed">
           <Shield size={48} className="mx-auto text-gray-300 mb-4" />
-          <h3 className="text-xl font-bold text-gray-700">Nenhum projeto encontrado</h3>
-          <p className="text-gray-500 mt-2 mb-6">Adicione seu primeiro projeto baseado no treinamento Sênior.</p>
+          <h3 className="text-xl font-bold text-gray-700">No projects found</h3>
+          <p className="text-gray-500 mt-2 mb-6">Add your first project based on the Senior training.</p>
           <Link href="/projetos/create" className="text-indigo-600 font-semibold hover:underline">
-            Adicionar Projeto &rarr;
+            Add Project &rarr;
           </Link>
         </div>
       ) : (
@@ -99,7 +99,7 @@ export default function ProjetosPage() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">{project.title}</h3>
                 <div className="mb-4">
-                  <h4 className="text-xs font-bold uppercase text-gray-400 mb-1">O Desafio (Business Problem)</h4>
+                  <h4 className="text-xs font-bold uppercase text-gray-400 mb-1">Business Problem</h4>
                   <div className="text-sm text-gray-700 line-clamp-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                     {project.scenario}
                   </div>
@@ -108,7 +108,7 @@ export default function ProjetosPage() {
                 <div className="space-y-3 mt-4">
                   <div>
                     <h4 className="text-xs font-bold uppercase text-gray-400 flex items-center gap-1.5 mb-1.5">
-                      <Server size={14} /> Tecnologias
+                      <Server size={14} /> Technologies
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
                       {project.requirements.split(',').map((req, i) => (
@@ -121,7 +121,7 @@ export default function ProjetosPage() {
                   
                   {project.dependencies && (
                     <div>
-                      <h4 className="text-xs font-bold uppercase text-gray-400 mb-1.5">Dependências</h4>
+                      <h4 className="text-xs font-bold uppercase text-gray-400 mb-1.5">Dependencies</h4>
                       <p className="text-sm text-gray-700 font-medium">{project.dependencies}</p>
                     </div>
                   )}
@@ -129,10 +129,10 @@ export default function ProjetosPage() {
               </div>
               <div className="bg-gray-50 p-4 border-t border-gray-100 flex justify-between items-center">
                 <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Em Produção
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> In Production
                 </span>
                 <Link href={`/projetos/${project.id}`} className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1">
-                  Ver Arquitetura &rarr;
+                  View Architecture &rarr;
                 </Link>
               </div>
             </div>

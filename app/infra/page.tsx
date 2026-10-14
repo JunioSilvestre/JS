@@ -3,7 +3,7 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Server, Plus, Search } from "lucide-react";
 import {
   apiGetInfraCategories,
   apiCreateInfraCategory,
@@ -796,7 +796,7 @@ export default function InfraPage() {
       btnSaveAll.onclick = async () => {
         await saveCurrentProject();
         btnSaveAll.textContent = "Salvo!";
-        setTimeout(() => (btnSaveAll.textContent = "Salvar"), 1000);
+        setTimeout(() => (btnSaveAll.textContent = "Save"), 1000);
       };
 
     const btnCopyCode = document.getElementById("btnCopyCode");
@@ -1006,7 +1006,7 @@ export default function InfraPage() {
           const regMsg = document.getElementById("regMsg");
           if (regMsg)
             regMsg.textContent =
-              "Categoria criada. Agora adicione projetos (aba 2).";
+              "Category criada. Agora adicione projetos (aba 2).";
           if (catIdEl) catIdEl.value = "";
           if (catLabelEl) catLabelEl.value = "";
           activeTabId = entry.id;
@@ -1102,6 +1102,78 @@ export default function InfraPage() {
         }}
       />
 
+        {/* TOP HEADER & STATS */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-1">
+                <Server size={16} />
+                <span>Hands-on Engineering Tracker</span>
+              </div>
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                Projetos de Infraestrutura & Labs
+              </h1>
+              <p className="text-slate-500 text-sm mt-0.5">
+                Laboratórios práticos por categoria, runbooks de produção e checklists de entrevista técnica.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                id="btnOpenRegister"
+                type="button"
+                className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition"
+              >
+                <Plus size={16} />
+                Cadastrar Rápido
+              </button>
+              <Link
+                href="/infra/create"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition"
+              >
+                <Plus size={16} />
+                Novo Projeto Completo
+              </Link>
+            </div>
+          </div>
+
+          {/* STATS BANNER */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+            <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl">
+              <span className="text-xs text-slate-500 font-medium">Total de Labs</span>
+              <p id="statTotal" className="text-xl font-bold text-slate-800 dark:text-slate-100">0</p>
+            </div>
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl">
+              <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Concluídos</span>
+              <p id="statDone" className="text-xl font-bold text-emerald-700 dark:text-emerald-300">0</p>
+            </div>
+            <div className="p-3 bg-red-50 dark:bg-red-950/30 rounded-xl">
+              <span className="text-xs text-red-600 dark:text-red-400 font-medium">Prioridade Alta</span>
+              <p id="statAlta" className="text-xl font-bold text-red-700 dark:text-red-300">0</p>
+            </div>
+            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">Progresso</span>
+                <span id="statPct" className="text-xs font-bold text-indigo-700 dark:text-indigo-300">0%</span>
+              </div>
+              <div className="w-full bg-indigo-200 dark:bg-indigo-900/60 h-2 rounded-full overflow-hidden">
+                <div id="progressBar" className="bg-indigo-600 h-2 rounded-full transition-all duration-300" style={{ width: '0%' }}></div>
+              </div>
+              <span id="progressText" className="text-[10px] text-slate-400 mt-1 block">0 / 0 concluídos</span>
+            </div>
+          </div>
+
+          {/* SEARCH BAR */}
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Buscar por nome do lab, tecnologia (ex: kubeadm, TLS, Calico)..."
+              className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+        </div>
+
         <div id="listView">
           {/* Tabs dinâmicas */}
           <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 mb-4">
@@ -1185,7 +1257,7 @@ export default function InfraPage() {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Voltar
+              Back
             </button>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -1225,7 +1297,7 @@ export default function InfraPage() {
                 id="btnSaveAll"
                 className="px-3 py-1.5 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
               >
-                Salvar
+                Save
               </button>
             </div>
           </div>
@@ -1273,7 +1345,7 @@ export default function InfraPage() {
               </div>
               <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Cenário real (o que a vaga espera)
+                  Scenario real (o que a vaga espera)
                 </h3>
                 <p id="detailScenario" className="text-sm leading-relaxed"></p>
               </div>
@@ -1448,7 +1520,7 @@ export default function InfraPage() {
               </button>
             </div>
             <p className="text-xs text-slate-500 mb-3">
-              <strong>1) Categoria</strong> (aba) → <strong>2) Projeto</strong>{" "}
+              <strong>1) Category</strong> (aba) → <strong>2) Projeto</strong>{" "}
               (card). Sem categoria não há vínculo.
             </p>
             <div className="flex gap-2 mb-4">
@@ -1456,7 +1528,7 @@ export default function InfraPage() {
                 data-regtab="categoria"
                 className="reg-tab active px-3 py-1.5 text-sm rounded-lg bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-medium"
               >
-                1. Categoria
+                1. Category
               </button>
               <button
                 data-regtab="projeto"
@@ -1492,13 +1564,13 @@ export default function InfraPage() {
                 id="btnSaveCat"
                 className="w-full py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
               >
-                Criar categoria
+                Create categoria
               </button>
             </div>
             <div id="regFormProj" className="space-y-3 hidden">
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">
-                  Categoria
+                  Category
                 </label>
                 <select
                   id="regProjCat"
@@ -1542,7 +1614,7 @@ export default function InfraPage() {
                 id="btnSaveProj"
                 className="w-full py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
               >
-                Adicionar projeto
+                Add projeto
               </button>
             </div>
             <p id="regMsg" className="text-xs text-slate-500 mt-3"></p>

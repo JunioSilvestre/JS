@@ -334,3 +334,9 @@ export async function apiDeleteProjeto(id: number) {
     method: "DELETE",
   });
 }
+
+export async function apiGetLinuxCommands() {
+  const res = await fetch('/api/linux?t=' + Date.now(), { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to fetch linux commands');
+  return res.json();
+}

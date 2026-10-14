@@ -78,16 +78,16 @@ function CreateModuleForm() {
     }
   }, [editId]);
 
-  const validate = (): boolean => {
+  const validate = (dataToValidate = formData): boolean => {
     const errs: Record<string, string> = {};
-    if (!formData.id.trim()) errs.id = "ID is required";
-    else if (!/^[a-z0-9-]+$/.test(formData.id))
+    if (!dataToValidate.id.trim()) errs.id = "ID is required";
+    else if (!/^[a-z0-9-]+$/.test(dataToValidate.id))
       errs.id = "Only lowercase letters, numbers and hyphens allowed";
-    else if (formData.id.length < 3)
+    else if (dataToValidate.id.length < 3)
       errs.id = "ID must be at least 3 characters";
 
-    if (!formData.title.trim()) errs.title = "Title is required";
-    else if (formData.title.length < 3)
+    if (!dataToValidate.title.trim()) errs.title = "Title is required";
+    else if (dataToValidate.title.length < 3)
       errs.title = "Title must be at least 3 characters";
 
     setErrors(errs);
@@ -105,14 +105,23 @@ function CreateModuleForm() {
   };
 
   const handleSave = async () => {
-    if (!validate()) return;
+    const cleanId = formData.id
+      .trim()
+      .toLowerCase()
+      .replace(/[\s_—–.]+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")
+      .replace(/^-+|-+$/g, "");
+    const payload = { ...formData, id: cleanId };
+    setFormData(payload);
+
+    if (!validate(payload)) return;
     setSaving(true);
     setErrors({});
     try {
       if (isEdit && editId) {
-        await apiUpdateModule(editId, formData);
+        await apiUpdateModule(editId, payload);
       } else {
-        await apiCreateModule(formData);
+        await apiCreateModule(payload);
       }
       setSuccess(true);
       setTimeout(() => router.push("/"), 800);
@@ -188,7 +197,14 @@ function CreateModuleForm() {
               type="text"
               placeholder="e.g. lpic1-101-500"
               value={formData.id}
-              onChange={(e) => handleChange("id", e.target.value.toLowerCase().trim())}
+              onChange={(e) => {
+                const cleaned = e.target.value
+                  .toLowerCase()
+                  .replace(/[\s_—–.]+/g, "-")
+                  .replace(/[^a-z0-9-]/g, "")
+                  .replace(/-+/g, "-");
+                handleChange("id", cleaned);
+              }}
               disabled={isEdit}
               className={`w-full bg-[#f5f5f5] border rounded-xl px-4 py-3 text-gray-900 font-mono text-sm focus:outline-none transition ${
                 errors.id
@@ -204,8 +220,7 @@ function CreateModuleForm() {
             )}
             {!errors.id && (
               <p className="text-xs text-slate-500">
-                Lowercase, numbers and hyphens only. Cannot be changed after
-                creation.
+                Lowercase, numbers and hyphens only (spaces and underscores are auto-converted to hyphens).
               </p>
             )}
           </div>

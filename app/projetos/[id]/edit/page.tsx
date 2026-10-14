@@ -42,11 +42,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             references_links: data.references_links || ""
           });
         } else {
-          alert("Projeto não encontrado");
+          alert("Project not found");
           router.push("/projetos");
         }
       } catch (error) {
-        console.error("Erro ao carregar projeto:", error);
+        console.error("Error loading projeto:", error);
       } finally {
         setFetching(false);
       }
@@ -67,7 +67,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         router.push(`/projetos/${id}`);
         router.refresh();
       } else {
-        alert("Erro ao atualizar projeto");
+        alert("Error updating project");
       }
     } catch (error) {
       console.error(error);
@@ -93,7 +93,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
             <FolderOpen className="text-indigo-600" />
-            Editar Projeto
+            Edit Projeto
           </h1>
           <p className="text-gray-500 text-sm">Atualize os detalhes do cenário Sênior</p>
         </div>
@@ -102,7 +102,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Título do Projeto</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Project Title</label>
             <input 
               required
               type="text"
@@ -113,7 +113,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Cenário (Enunciado)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Scenario (Prompt)</label>
             <textarea 
               required
               rows={4}
@@ -124,7 +124,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Tecnologias / Requisitos Rápidos</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Technologies / Quick Requirements</label>
             <input 
               required
               type="text"
@@ -135,7 +135,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Duração Estimada</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Duration</label>
             <select 
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"
               value={formData.duration}
@@ -151,7 +151,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Dependências Prévias (Opcional)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Prior Dependencies (Optional)</label>
             <input 
               type="text"
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"
@@ -165,7 +165,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Detalhes e Arquitetura</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Details and Architecture</label>
             <textarea 
               rows={6}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -176,7 +176,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Exemplos de Código (Arquivos, Configurações, Scripts)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Exemplos de Código (Arquivos, Settings, Scripts)</label>
             <textarea 
               rows={6}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -187,7 +187,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div className="md:col-span-1">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Tecnologias (Detalhado)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Technologies (Detailed)</label>
             <textarea 
               rows={4}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -198,7 +198,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           </div>
 
           <div className="md:col-span-1">
-            <label className="block text-sm font-bold text-gray-700 mb-2">Links e Referências</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Links and References</label>
             <textarea 
               rows={4}
               className="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border font-mono text-sm"
@@ -214,7 +214,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             href="/projetos"
             className="px-5 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
           >
-            Cancelar
+            Cancel
           </Link>
           <button 
             disabled={loading}
@@ -226,7 +226,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             ) : (
               <Save size={20} />
             )}
-            Atualizar Projeto
+            Update Project
           </button>
         </div>
       </form>

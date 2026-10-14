@@ -201,7 +201,75 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-            {/* Loading */}
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Modules Management
+          </h1>
+          <p className="text-sm text-gray-500">
+            Create, edit, and organize certification modules and projects
+          </p>
+        </div>
+        <Link
+          href="/modules/create"
+          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-indigo-500/25 border border-indigo-500 text-sm flex-shrink-0 self-start sm:self-auto"
+        >
+          <FilePlus2 size={18} /> Create Module
+        </Link>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-wrap gap-3">
+        <div className="flex-1 min-w-[200px] relative">
+          <Search
+            size={18}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"
+          />
+          <input
+            type="text"
+            placeholder="Search modules by title, description or certification..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white border border-gray-300 text-gray-900 placeholder-slate-500 rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition text-sm"
+          />
+        </div>
+        <div className="relative">
+          <Filter
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+          />
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="bg-white border border-gray-300 hover:border-slate-500 text-gray-700 pl-9 pr-8 py-2.5 rounded-xl transition appearance-none focus:outline-none focus:border-indigo-500 text-sm cursor-pointer"
+          >
+            <option value="">All Levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+        </div>
+        <div className="relative">
+          <ArrowUpDown
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+          />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-white border border-gray-300 hover:border-slate-500 text-gray-700 pl-9 pr-8 py-2.5 rounded-xl transition appearance-none focus:outline-none focus:border-indigo-500 text-sm cursor-pointer"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+            <option value="questions">Most Questions</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Loading */}
             {loading && (
               <div className="flex items-center justify-center py-24 text-gray-500">
                 <Loader2 size={24} className="animate-spin mr-3" />
